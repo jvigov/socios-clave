@@ -1,0 +1,950 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B3A30">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Socios Clave">
+<title>Socios Clave</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: app móvil — Inicio (panel del equipo), Socios, Equipo (reto, eventos, sorteos, mesa) y Sistema (guía Fuxion); ficha del socio en hoja de una sola columna */
+:root{
+  --bg:#F2F5F1;--surface:#FFFFFF;--surface-2:#EAEFE9;--line:#DCE3DC;--fg:#13201B;--muted:#5C6B63;
+  --hero:#0B3A30;--hero-2:#15604B;--hero-ink:#ECF7F2;--hero-muted:#A7CBBD;--hero-tile:rgba(255,255,255,.08);--hero-line:rgba(255,255,255,.16);
+  --accent:#0B6E58;--accent-ink:#FFFFFF;--accent-soft:#DBF0E7;
+  --warm:#C2610C;--warm-soft:#FCE9D5;--gold:#A87A06;--gold-soft:#FBF0D2;--danger:#B42318;--scrim:rgba(6,20,15,.55);
+  --shadow:0 1px 2px rgba(15,35,28,.05),0 8px 24px rgba(15,35,28,.07);
+  --t1:#7A8880;--t2:#2D74A0;--t3:#0B7A60;--t4:#B0700E;--t5:#A62B52;--t-ink:#FFFFFF;
+  --c0:#8A9A92;--c1:#5E9C7E;--c2:#0B7A60;--c3:#2D74A0;--c4:#6A55B0;--c5:#B0700E;--c6:#A62B52;
+  --l1:#0B7A60;--l2:#2D6FB4;--l3:#C2610C;
+  --f-display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0A110F;--surface:#131C18;--surface-2:#1B2722;--line:#26342E;--fg:#E4EEE9;--muted:#93A49B;
+  --hero:#0D2A23;--hero-2:#155240;--hero-ink:#ECF7F2;--hero-muted:#8FB6A7;
+  --accent:#4FCFA8;--accent-ink:#04231B;--accent-soft:#12372D;
+  --warm:#F3A75E;--warm-soft:#3A2817;--gold:#F0C75E;--gold-soft:#3A3014;--danger:#F2877D;--scrim:rgba(0,0,0,.65);
+  --shadow:0 0 0 1px #1F2B26;
+  --t1:#A3B2AA;--t2:#72B3E0;--t3:#4FCFA8;--t4:#E8B05A;--t5:#EE87A6;--t-ink:#0A110F;
+  --c0:#A3B2AA;--c1:#8CCBA9;--c2:#4FCFA8;--c3:#72B3E0;--c4:#A99BEA;--c5:#E8B05A;--c6:#EE87A6;
+  --l1:#4FCFA8;--l2:#7DB4F0;--l3:#F3A75E;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0A110F;--surface:#131C18;--surface-2:#1B2722;--line:#26342E;--fg:#E4EEE9;--muted:#93A49B;
+  --hero:#0D2A23;--hero-2:#155240;--hero-ink:#ECF7F2;--hero-muted:#8FB6A7;
+  --accent:#4FCFA8;--accent-ink:#04231B;--accent-soft:#12372D;
+  --warm:#F3A75E;--warm-soft:#3A2817;--gold:#F0C75E;--gold-soft:#3A3014;--danger:#F2877D;--scrim:rgba(0,0,0,.65);
+  --shadow:0 0 0 1px #1F2B26;
+  --t1:#A3B2AA;--t2:#72B3E0;--t3:#4FCFA8;--t4:#E8B05A;--t5:#EE87A6;--t-ink:#0A110F;
+  --c0:#A3B2AA;--c1:#8CCBA9;--c2:#4FCFA8;--c3:#72B3E0;--c4:#A99BEA;--c5:#E8B05A;--c6:#EE87A6;
+  --l1:#4FCFA8;--l2:#7DB4F0;--l3:#F3A75E;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,h4{font-family:var(--f-display);letter-spacing:-.02em;text-wrap:balance;margin:0}
+p{margin:0}a{color:inherit}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input,select,textarea{font:inherit;font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:10px 12px;width:100%;min-width:0}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+textarea{resize:vertical;min-height:76px}
+label.f,.f{display:flex;flex-direction:column;gap:5px;font-size:.78rem;font-weight:700;color:var(--muted);min-width:0}
+.t1{--tc:var(--t1)}.t2{--tc:var(--t2)}.t3{--tc:var(--t3)}.t4{--tc:var(--t4)}.t5{--tc:var(--t5)}
+.c0{--cc:var(--c0)}.c1{--cc:var(--c1)}.c2{--cc:var(--c2)}.c3{--cc:var(--c3)}.c4{--cc:var(--c4)}.c5{--cc:var(--c5)}.c6{--cc:var(--c6)}
+.min{min-width:0}.muted{color:var(--muted)}.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.lbl{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.plain{border:0;background:none;padding:0;text-align:left}
+
+/* Hero */
+.hero{background:radial-gradient(110% 90% at 100% 0%,var(--hero-2),transparent 62%),var(--hero);color:var(--hero-ink);border-radius:0 0 26px 26px;padding-inline:16px;padding-block:16px 18px}
+.hin{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.htop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--hero-muted)}
+.hero h1{font-size:1.85rem;font-weight:800;line-height:1.05;margin-top:4px}
+.hero .sub{color:var(--hero-muted);font-size:.9rem;margin-top:4px}
+.soy{display:flex;align-items:center;gap:4px;background:var(--hero-tile);border:1px solid var(--hero-line);border-radius:999px;padding:3px 3px 3px 12px;font-size:.76rem;font-weight:700;color:var(--hero-muted);flex:none}
+.soy select{width:auto;background:transparent;border:0;color:var(--hero-ink);font-weight:700;padding:4px 6px;font-size:.9rem;box-shadow:none}
+.soy select option{color:var(--fg);background:var(--surface)}
+.hchips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.hchips::-webkit-scrollbar{display:none}
+.hchip{flex:none;border:1px solid var(--hero-line);background:var(--hero-tile);color:var(--hero-ink);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:700;display:inline-flex;gap:6px;align-items:center}
+.hchip i{width:8px;height:8px;border-radius:50%;background:var(--lc)}
+.hchip[aria-pressed="true"]{background:var(--hero-ink);color:var(--hero);border-color:var(--hero-ink)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.kpi{background:var(--hero-tile);border:1px solid var(--hero-line);border-radius:14px;padding:10px 12px;min-width:0;text-align:left;color:inherit}
+.kpi b{display:block;font:800 1.6rem/1.05 var(--f-display);font-variant-numeric:tabular-nums}
+.kpi span{font-size:.72rem;color:var(--hero-muted);font-weight:600}
+
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:16px 120px}
+.banner{padding:10px 12px;border-radius:12px;background:var(--warm-soft);font-size:.88rem;margin-bottom:12px}
+.sech{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:22px 2px 10px}
+.sech:first-child{margin-top:4px}
+.sech h2{font-size:1.15rem;font-weight:700}
+.sech .r{font-size:.8rem;color:var(--muted)}
+.seg{display:flex;gap:3px;background:var(--surface-2);border-radius:11px;padding:3px}
+.seg button,.seg label{flex:1;border:0;background:transparent;text-align:center;padding:8px 6px;border-radius:9px;font-size:.82rem;font-weight:700;color:var(--muted);cursor:pointer;position:relative;white-space:nowrap}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg [aria-pressed="true"],.seg label:has(input:checked){background:var(--surface);color:var(--fg);box-shadow:var(--shadow)}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent)}
+.search{position:relative}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search input{padding-left:38px;border-radius:14px;box-shadow:var(--shadow);border-color:transparent}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-block:10px 2px;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600;display:inline-flex;gap:6px;align-items:center}
+.chip i{width:8px;height:8px;border-radius:50%;background:var(--cc,var(--tc,var(--lc)))}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip .n{font-family:var(--f-mono);font-size:.72rem;opacity:.65}
+
+/* Avatares, tarjetas */
+.av{--p:0;width:48px;height:48px;border-radius:50%;background:conic-gradient(var(--tc,var(--accent)) calc(var(--p)*1%),var(--surface-2) 0);display:grid;place-items:center;flex:none;position:relative}
+.av>span{width:40px;height:40px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font:700 .9rem var(--f-display);color:var(--tc,var(--accent));overflow:hidden}
+.av>span img{width:100%;height:100%;object-fit:cover;display:block}
+.av .fl{position:absolute;right:-3px;bottom:-3px;font-size:.95rem;line-height:1;font-style:normal}
+.av.lg{width:78px;height:78px}.av.lg>span{width:68px;height:68px;font-size:1.4rem}.av.lg .fl{font-size:1.3rem}
+.av.sm{width:36px;height:36px}.av.sm>span{width:30px;height:30px;font-size:.72rem}.av.sm .fl{font-size:.72rem}
+.cards{display:flex;flex-direction:column;gap:8px}
+.card{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;background:var(--surface);border:0;border-radius:16px;box-shadow:var(--shadow);text-align:left;width:100%}
+.card:active{transform:scale(.985)}
+.cname{font-weight:700;font-size:1rem;display:block;overflow-wrap:anywhere;line-height:1.25}
+.cmeta{color:var(--muted);font-size:.8rem;display:block;overflow-wrap:anywhere}
+.cside{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.tpill{font:700 .72rem var(--f-mono);color:var(--t-ink);background:var(--tc);border-radius:7px;padding:3px 7px;white-space:nowrap}
+.cpill{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:800;color:var(--cc);background:color-mix(in srgb,var(--cc) 14%,var(--surface));border-radius:99px;padding:3px 9px;white-space:nowrap}
+.cpill::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cc)}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:.74rem;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.tag.ok{background:var(--accent-soft);color:var(--accent)}.tag.w{background:var(--warm-soft);color:var(--warm)}.tag.g{background:var(--gold-soft);color:var(--gold)}
+.nextl{display:block;margin-top:5px;font-size:.78rem;font-weight:700;color:var(--accent)}
+.empty{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:22px 18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.empty h3{font-size:1.15rem}.empty p{color:var(--muted);max-width:56ch}
+.box{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:14px}
+.box h4{font-size:1rem;font-weight:700;margin-bottom:10px}
+
+/* Botones */
+.btn{border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:11px 16px;border-radius:12px;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.ghost{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.btn.soft{background:var(--accent-soft);color:var(--accent)}
+.btn.danger{background:transparent;color:var(--danger);border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;font-size:.84rem;border-radius:10px}
+.btn.block{width:100%}
+.row-end{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.del{border:0;background:transparent;color:var(--muted);font-size:.74rem;padding:2px 4px}
+.del[data-arm="1"]{color:var(--danger);font-weight:700}
+
+/* Contador de líderes */
+.lpick{display:flex;gap:6px}
+.lp{width:40px;height:40px;border-radius:50%;border:2px solid var(--line);background:var(--surface);font:800 .95rem var(--f-display);color:var(--muted);display:grid;place-items:center;transition:background .15s,transform .1s}
+.lp.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.lp:active{transform:scale(.9)}
+.lpick.sm{gap:4px}.lpick.sm .lp{width:30px;height:30px;font-size:.78rem;border-width:1.5px}
+
+/* Escalera */
+.ladder{display:flex;flex-direction:column;gap:6px}
+.lrow{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;border:0;background:none;padding:2px 0;text-align:left;width:100%}
+.lrow .nm{font-size:.84rem;font-weight:700;display:flex;align-items:center;gap:6px;min-width:0}
+.lrow .nm i{width:8px;height:8px;border-radius:50%;background:var(--cc);flex:none}
+.lrow .bar{height:22px;background:var(--surface-2);border-radius:7px;overflow:hidden}
+.lrow .bar i{display:block;height:100%;background:var(--cc);border-radius:7px;min-width:3px}
+.lrow .v{font:700 .85rem var(--f-mono);min-width:22px;text-align:right}
+.steps7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:10px 0 2px}
+.st7{display:flex;flex-direction:column;align-items:center;gap:5px;min-width:0}
+.st7 .d{width:100%;height:8px;border-radius:99px;background:var(--surface-2)}
+.st7.on .d{background:var(--cc)}
+.st7.cur .d{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--cc)}
+.st7 small{font-size:.6rem;font-weight:700;color:var(--muted);text-align:center;line-height:1.1;overflow-wrap:anywhere}
+.st7.cur small{color:var(--fg)}
+
+/* Nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:15;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr auto 1fr 1fr;align-items:center;padding:6px 10px}
+.nb{border:0;background:transparent;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;font-size:.7rem;font-weight:700;color:var(--muted);position:relative}
+.nb[aria-selected="true"]{color:var(--accent)}
+.nb .dotn{position:absolute;top:1px;left:calc(50% + 6px);min-width:17px;height:17px;border-radius:99px;background:var(--warm);color:#fff;font:700 .62rem/17px var(--f-mono);padding:0 4px}
+.fab{width:56px;height:56px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;margin:-24px 6px 0;box-shadow:0 8px 20px rgba(11,110,88,.35),0 0 0 5px var(--bg)}
+.fab:active{transform:scale(.94)}
+
+/* Equipo */
+.ccard{background:var(--surface);border-radius:20px;box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:14px;margin-bottom:12px}
+.ctop{display:flex;justify-content:space-between;gap:14px;align-items:center}
+.ctop h3{font-size:1.25rem;font-weight:800}
+.ring{--p:0;width:74px;height:74px;border-radius:50%;background:conic-gradient(var(--warm) calc(var(--p)*1%),var(--warm-soft) 0);display:grid;place-items:center;flex:none}
+.ring>div{width:60px;height:60px;border-radius:50%;background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.ring b{font:800 1.4rem var(--f-display);color:var(--warm);font-variant-numeric:tabular-nums}
+.ring small{font-size:.6rem;font-weight:700;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;align-items:end;height:130px}
+.pod{display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;min-width:0}
+.pod .cnt{font:800 1.25rem var(--f-display);font-variant-numeric:tabular-nums;line-height:1;text-align:center}
+.pod .cnt small{font:600 .66rem var(--f-body);color:var(--muted);display:block;margin-top:2px}
+.pod .col{width:100%;border-radius:10px 10px 4px 4px;background:var(--lc);min-height:8px;opacity:.9}
+.pod.lead .col{opacity:1;box-shadow:0 0 0 3px var(--surface),0 0 0 5px var(--lc)}
+.pod .nm{font-size:.78rem;font-weight:700;text-align:center;overflow-wrap:anywhere}
+.rrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0}
+.rrow:first-child{border-top:0}
+.rk{display:grid;grid-template-columns:22px auto 1fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);width:100%}
+.rk:first-child{border-top:0}
+.rk .pos{font:700 .8rem var(--f-mono);color:var(--muted)}
+.tix{font:700 .82rem var(--f-mono);background:var(--gold-soft);color:var(--gold);padding:3px 9px;border-radius:99px;white-space:nowrap}
+.stack{display:flex}.stack .av{margin-left:-8px;box-shadow:0 0 0 2px var(--surface)}.stack .av:first-child{margin-left:0}
+.evc{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:0;border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:left;width:100%;margin-bottom:8px}
+.cal{width:50px;border-radius:12px;background:var(--warm-soft);color:var(--warm);text-align:center;padding:6px 0;line-height:1.05;flex:none}
+.cal b{display:block;font:800 1.3rem var(--f-display)}
+.cal span{font-size:.66rem;font-weight:800;text-transform:uppercase}
+.funnel{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.cand{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.cand:first-child{border-top:0}
+.score{display:flex;gap:2px}.score i{width:6px;height:16px;border-radius:2px;background:var(--surface-2)}.score i.on{background:var(--accent)}
+details.past summary{cursor:pointer;font-weight:700;color:var(--muted);padding:10px 2px;list-style:none}
+details.past summary::-webkit-details-marker{display:none}
+.conv{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.conv:first-child{border-top:0}.conv .seg{grid-column:1/-1}.conv .seg button{font-size:.74rem;padding:6px 2px}
+
+/* Sistema */
+.guide{display:flex;flex-direction:column;gap:10px}
+.gcard{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.gcard>summary{list-style:none;cursor:pointer;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.gcard>summary::-webkit-details-marker{display:none}
+.gcard>summary .ic{width:42px;height:42px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:1.2rem}
+.gcard>summary b{font-family:var(--f-display);font-size:1.05rem;display:block}
+.gcard>summary small{color:var(--muted);font-size:.8rem;display:block}
+.gcard>summary .chev{color:var(--muted);transition:transform .2s;font-size:1.2rem}
+.gcard[open]>summary .chev{transform:rotate(90deg)}
+.gbody{padding:0 14px 14px;display:flex;flex-direction:column;gap:2px}
+.gi{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.gi:first-child{border-top:0}
+.gi .n{min-width:30px;height:28px;padding:0 4px;border-radius:8px;background:var(--surface-2);color:var(--fg);display:grid;place-items:center;font:800 .78rem var(--f-display);flex:none}
+.gi.cc .n{background:var(--cc);color:var(--surface)}
+.gi b{display:block;font-weight:700}
+.gi small{display:block;color:var(--muted);font-size:.84rem}
+.gi .how{display:block;font-size:.84rem;margin-top:3px}
+.gi .how::before{content:"→ ";color:var(--accent);font-weight:700}
+.note-src{font-size:.76rem;color:var(--muted);margin-top:6px}
+
+/* Hoja */
+.sheet{position:fixed;inset:0;z-index:30;display:flex;justify-content:center;align-items:flex-end;background:var(--scrim)}
+.panel{background:var(--bg);width:100%;max-width:640px;height:95%;overflow-y:auto;border-radius:24px 24px 0 0;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));overscroll-behavior:contain;position:relative}
+@media (min-width:700px){.sheet{align-items:center;padding:24px}.panel{border-radius:24px;max-height:calc(100% - 48px)}}
+.grab{width:40px;height:5px;border-radius:99px;background:var(--line);margin:8px auto 0}
+.shero{position:relative;padding:12px 16px 16px;background:linear-gradient(180deg,color-mix(in srgb,var(--tc,var(--accent)) 16%,var(--bg)),var(--bg));display:flex;flex-direction:column;gap:12px}
+.shtop{display:flex;gap:14px;align-items:center;padding-right:44px}
+.shtop h2{font-size:1.55rem;font-weight:800;line-height:1.1;overflow-wrap:anywhere}
+.obj{font-size:.86rem;background:var(--surface);border-radius:12px;padding:8px 11px;box-shadow:var(--shadow)}
+.obj b{font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.x{position:absolute;top:12px;right:14px;border:1px solid var(--line);background:var(--surface);width:38px;height:38px;border-radius:50%;display:grid;place-items:center;z-index:3}
+.sbody{padding:4px 16px 16px;display:flex;flex-direction:column;gap:14px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form .full{grid-column:1/-1}
+@media (max-width:420px){.form{grid-template-columns:1fr}}
+.cond{border-left:4px solid var(--cc)}
+.condhead{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.condhead b{font:800 1.25rem var(--f-display);color:var(--cc)}
+.teach{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:.88rem}
+.teach strong{display:block;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.habs{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.hab{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:6px 11px;font-size:.8rem;font-weight:700;color:var(--muted)}
+.hab[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.awl{display:inline-flex;align-items:center;gap:6px;font-size:.84rem;font-weight:700;color:var(--accent);text-decoration:none;margin-top:8px}
+.checks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.checks li{border-top:1px solid var(--line)}
+.checks li:first-child{border-top:0}
+.ckrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.fd{width:auto;max-width:150px;padding:5px 8px;font-size:16px;border-radius:9px;color:var(--muted);font-family:var(--f-mono)}
+.ck{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:10px 0}
+.box2{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;font-size:.8rem;font-weight:800;color:var(--accent-ink);flex:none}
+li.done .box2{background:var(--accent);border-color:var(--accent)}
+li.star.done .box2{background:var(--gold);border-color:var(--gold)}
+.ck b{font-weight:600}
+.ck small{display:block;color:var(--muted);font-size:.78rem}
+.sdate{font:600 .72rem var(--f-mono);color:var(--muted);white-space:nowrap}
+.ckhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.ckhead span{font:700 .8rem var(--f-mono);color:var(--muted)}
+.mini{height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;margin:4px 0 6px}
+.mini i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.eje{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.eje:first-of-type{border-top:0}
+.lvl{width:44px;height:44px;border-radius:12px;background:var(--tc,var(--accent-soft));color:var(--t-ink);display:grid;place-items:center;font:800 .95rem var(--f-display);flex:none}
+.lvl.alt{background:var(--accent-soft);color:var(--accent)}
+.eje b{font-family:var(--f-display);font-size:1rem;display:block}
+.eje small{color:var(--muted);font-size:.78rem;display:block}
+.evo{display:flex;flex-wrap:wrap;gap:5px;margin-top:5px}
+.evo span{font-size:.68rem;font-weight:600;background:var(--surface-2);border-radius:99px;padding:2px 8px}
+.topts{display:flex;flex-direction:column;gap:8px}
+.topt{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;cursor:pointer;background:var(--surface);position:relative}
+.topt input{position:absolute;opacity:0;pointer-events:none}
+.topt .lvl{width:38px;height:38px;font-size:.85rem;border-radius:10px}
+.topt b{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.topt small{display:block;color:var(--muted);font-size:.8rem}
+.topt .cur{font:700 .62rem var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface-2);padding:2px 6px;border-radius:99px}
+.topt:has(input:checked){border-color:var(--tc,var(--accent));background:color-mix(in srgb,var(--tc,var(--accent)) 9%,var(--surface))}
+.topt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.list{display:flex;flex-direction:column;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.it{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:11px 12px;border-top:1px solid var(--line);width:100%;background:none;border-left:0;border-right:0;border-bottom:0;text-align:left}
+.it:first-child{border-top:0}
+.meta{display:block;font-size:.78rem;color:var(--muted)}
+.notes{display:flex;flex-direction:column;gap:10px}
+.note{background:var(--bg);border-radius:4px 14px 14px 14px;padding:10px 12px;border-left:3px solid var(--lc)}
+.note p{white-space:pre-wrap;overflow-wrap:anywhere}
+.note .by{display:flex;justify-content:space-between;gap:8px;font-size:.75rem;color:var(--muted);margin-top:5px}
+.note .by b{color:var(--lc)}
+.pick{display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto}
+.pick label{display:grid;grid-template-columns:auto auto 1fr;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer}
+.pick label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.pick input{width:18px;height:18px;accent-color:var(--accent)}
+.foot{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:4px 16px 0}
+.photo{display:flex;gap:12px;align-items:center}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:14px;font-size:.88rem;font-weight:700;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.draw{position:fixed;inset:0;z-index:55;background:radial-gradient(90% 70% at 50% 30%,var(--hero-2),var(--hero));color:var(--hero-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 16px;text-align:center}
+.draw .eyebrow{color:var(--hero-muted)}
+.draw .name{font:800 clamp(2rem,9vw,3.6rem)/1.05 var(--f-display);letter-spacing:-.03em;min-height:2.3em;display:flex;align-items:center;justify-content:center;overflow-wrap:anywhere;max-width:16ch}
+.draw .btn.ghost{background:transparent;color:var(--hero-ink);border-color:var(--hero-line)}
+@media (prefers-reduced-motion:no-preference){
+  .panel{animation:up .26s cubic-bezier(.2,.8,.2,1)}@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+  .toast{animation:tin .25s ease}@keyframes tin{from{transform:translate(-50%,10px);opacity:0}}
+  .draw.won .name{animation:win .6s cubic-bezier(.2,1.6,.4,1)}@keyframes win{0%{transform:scale(.7)}100%{transform:scale(1)}}
+}
+
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+body.nologin #top,body.nologin main,body.nologin .nav{display:none}
+.login{min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding-inline:16px;padding-block:24px;background:radial-gradient(110% 70% at 100% 0%,var(--hero-2),transparent 60%),var(--hero);color:var(--hero-ink)}
+.login form{width:100%;max-width:380px;display:flex;flex-direction:column;gap:12px}
+.login h1{font:800 2.2rem/1.05 var(--f-display);letter-spacing:-.03em}
+.login p{color:var(--hero-muted)}
+.login label{display:flex;flex-direction:column;gap:5px;font-size:.8rem;font-weight:700;color:var(--hero-muted)}
+.login input{background:var(--hero-tile);border-color:var(--hero-line);color:var(--hero-ink)}
+.login .btn{background:var(--hero-ink);color:var(--hero);padding:13px 16px;margin-top:6px}
+.login .msg{min-height:1.2em;color:#FFC9A8;font-size:.88rem;font-weight:600}
+</style>
+</head>
+<body class="nologin">
+
+
+<div id="top"></div>
+<main class="wrap">
+  <div id="banner" class="banner" hidden></div>
+  <section id="vInicio"></section>
+  <section id="vSocios" hidden>
+    <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Buscar por nombre, código o país" aria-label="Buscar socio"></div>
+    <div class="chips" id="fil"></div>
+    <div class="chips" id="fil2" style="padding-top:6px"></div>
+    <div class="sech"><h2 id="listTitle">Socios</h2><span class="r" id="listCount"></span></div>
+    <div id="lista"></div>
+  </section>
+  <section id="vEquipo" hidden></section>
+  <section id="vSistema" hidden></section>
+</main>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="nav-in">
+    <button class="nb" data-tab="inicio" aria-selected="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>Inicio</button>
+    <button class="nb" data-tab="socios" aria-selected="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.6 3.3-5.5 6.5-5.5s5.9 1.9 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14c2.4.1 4 1.6 4.5 4.5"/></svg>Socios</button>
+    <button class="fab" id="fab" aria-label="Agregar"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button class="nb" data-tab="equipo" aria-selected="false"><span class="dotn" id="retoDot" hidden></span><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 6H4.5a2.5 2.5 0 0 0 2.6 3.6M17 6h2.5a2.5 2.5 0 0 1-2.6 3.6"/><path d="M12 14v3M8.5 20h7l-.8-3H9.3l-.8 3Z"/></svg>Equipo</button>
+    <button class="nb" data-tab="sistema" aria-selected="false"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5Z"/><path d="M4 19a2 2 0 0 1 2-2h13"/><path d="M9 8h6M9 11h4"/></svg>Sistema</button>
+  </div>
+</nav>
+
+<div id="sheet" class="sheet" hidden></div>
+<div id="draw" class="draw" hidden></div>
+<div id="toast" class="toast" hidden></div>
+<input type="file" id="fotoIn" accept="image/*" hidden>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+/* ================= Sistema Fuxion (datos fijos) ================= */
+const AWARE="https://www.aware-play.com/";
+const LIDERES=["Johnatan","Gino","Maricielo"];
+const LCOL={Johnatan:"var(--l1)",Gino:"var(--l2)",Maricielo:"var(--l3)"};
+const PAISES=[["AR","Argentina","Sudamérica"],["BO","Bolivia","Sudamérica"],["BR","Brasil","Sudamérica"],["CL","Chile","Sudamérica"],["CO","Colombia","Sudamérica"],["EC","Ecuador","Sudamérica"],["PE","Perú","Sudamérica"],["UY","Uruguay","Sudamérica"],
+["CR","Costa Rica","Centroamérica"],["GT","Guatemala","Centroamérica"],["HN","Honduras","Centroamérica"],["PA","Panamá","Centroamérica"],
+["MX","México","Norteamérica y Caribe"],["US","Estados Unidos","Norteamérica y Caribe"],["PR","Puerto Rico","Norteamérica y Caribe"],
+["DE","Alemania","Europa"],["AT","Austria","Europa"],["BE","Bélgica","Europa"],["CY","Chipre","Europa"],["HR","Croacia","Europa"],["SK","Eslovaquia","Europa"],["SI","Eslovenia","Europa"],["ES","España","Europa"],["EE","Estonia","Europa"],["FI","Finlandia","Europa"],["FR","Francia","Europa"],["GR","Grecia","Europa"],["NL","Países Bajos","Europa"],["IE","Irlanda","Europa"],["IT","Italia","Europa"],["LV","Letonia","Europa"],["LT","Lituania","Europa"],["LU","Luxemburgo","Europa"],["MT","Malta","Europa"],["PT","Portugal","Europa"]];
+const flag=c=>c&&/^[A-Z]{2}$/.test(c)?String.fromCodePoint(...[...c].map(x=>127397+x.charCodeAt(0))):"";
+function pais(p){if(!p)return null;return PAISES.find(x=>x[0]===p)||PAISES.find(x=>x[1].toLowerCase()===String(p).toLowerCase())||["",String(p),""];}
+const paisTxt=p=>{const i=pais(p);return i?`${flag(i[0])} ${i[1]}`.trim():"";};
+
+/* Escalera: dos pasos previos + las 5 conductas clave */
+const ESC=[
+ {n:"Arranque",d:"Recién afiliado.",ens:"Bienvenida, inducción y relación: que conozca al equipo y a 5 líderes.",hab:null,aw:"Video de producto"},
+ {n:"Consume",d:"Usa el producto y tiene su testimonio.",ens:"Ser producto del producto: que viva y cuente sus resultados.",hab:"prospectar",aw:"Módulo Base de contactos"},
+ {n:"Vende",d:"Conducta 1 · Recomienda y comercializa los productos; genera ingresos directos y da el ejemplo con su volumen personal (Pro 1).",ens:"Prospectar y presentar el producto. Rumbo a Pro 1: 6 clientes preferentes y 25 productos.",hab:"presentar",aw:"Módulos Prospección y Presentación"},
+ {n:"Afilia",d:"Conducta 2 · Invita a nuevos socios y comparte la oportunidad de construir un equipo e ingresos residuales.",ens:"Presentación de negocio en 3 pasos y seguimiento. Meta: sus 5 primeros socios.",hab:"seguimiento",aw:"Video de oportunidad · Módulo Seguimiento"},
+ {n:"Fideliza",d:"Conducta 3 · Retiene y cuida a sus clientes recurrentes y a su equipo con acompañamiento constante.",ens:"Acompañamiento constante a clientes y socios: que recompren y se queden.",hab:"concretar",aw:"Módulo Trabajo con el nuevo socio"},
+ {n:"Lidera",d:"Conducta 4 · Guía con el ejemplo diario, motiva a su organización y participa en los espacios de crecimiento y capacitación.",ens:"Que dé el ejemplo: eventos, capacitaciones, y que haga la inducción y el plan de acción a su gente.",hab:"duplicar",aw:"Módulo Trabajo con el nuevo socio"},
+ {n:"Lidera líderes",d:"Conducta 5 · Empodera a sus socios clave para que se vuelvan líderes independientes que multipliquen resultados.",ens:"Mesa de desarrollo, lectura y mentoría de sus socios clave.",hab:"duplicar",aw:"Mesa de desarrollo"}];
+const HABS=[
+ {k:"prospectar",n:"Prospectar",d:"Hacer su lista y abrir conversaciones.",aw:"Base de contactos · Prospección e invitación"},
+ {k:"presentar",n:"Presentar",d:"Mostrar producto o negocio con las herramientas.",aw:"Presentación profesional (3 pasos)"},
+ {k:"seguimiento",n:"Seguimiento",d:"Volver a contactar hasta una decisión.",aw:"Seguimiento (10 tips) · video de seguimiento"},
+ {k:"concretar",n:"Concretar",d:"Cerrar: venta, afiliación o compromiso.",aw:"Seguimiento · video de seguimiento"},
+ {k:"duplicar",n:"Duplicar",d:"Enseñar a su gente a hacer lo mismo.",aw:"Trabajo con el nuevo socio"}];
+const ARR=[
+ {k:"foto",n:"Foto y flyer de bienvenida"},
+ {k:"grupos",n:"Agregado a los grupos"},
+ {k:"induccion",n:"Inducción",s:"Oficina virtual, link, herramientas e info de productos"},
+ {k:"connect",n:"Fuxion Connect",s:"Dinámicas con socios de varios países"},
+ {k:"lideres5",n:"Conoció a 5 líderes"},
+ {k:"plan",n:"Plan de acción",s:"1–2 h con PDF y proyección; arma su lista"}];
+const HITOS=[{k:"evento",n:"Primer evento"},{k:"perfil",n:"Le presentamos a un líder de su perfil"},{k:"venta",n:"Primera venta"},{k:"pro1",n:"Primer Pro 1",star:true},{k:"solo",n:"Presenta negocio o producto solo(a)"},{k:"afilio1",n:"Primera afiliación"},{k:"inauguracion",n:"Inauguración de negocio"},{k:"capacita",n:"Ya capacita"}];
+const LEGACY={induccion:"induccion",connect:"connect",plan:"plan",inauguracion:"inauguracion",evento:"evento",venta:"venta",afilio:"afilio1",capacita:"capacita"};
+const EJES={
+ tipo:{n:"Tipo de socio",pref:"T",def:2,niv:{1:["Consumidor","Solo consume con descuento.","Enséñale a consumir bien el producto."],2:["Consume y vende","Vende de vez en cuando, a ritmo bajo.","Acompañamiento de ventas a su ritmo. Puede despertar."],3:["Distribuidor","Quiere comisionar: tiene cartera, local o familiares.","Capacitación de ventas completa; sembrar el negocio en grande."],4:["Constructor","Quiere formar equipos. Va a los eventos.","Vale la pena invertirle tiempo: sistema de negocio y eventos."],5:["Top","Entra con todo, mentalidad empresarial.","Arranque explosivo: lista, plan de acción e inauguración."]}},
+ liderazgo:{n:"Tu liderazgo con él",pref:"L",def:1,sub:"5 niveles de John Maxwell",niv:{1:["Posición","Te sigue porque eres su patrocinador.","Gánate su confianza: conoce su objetivo y cumple lo que prometes."],2:["Permiso","Te sigue por la relación y la confianza.","Ayúdale a lograr un resultado concreto y rápido."],3:["Producción","Te sigue por tus resultados.","Enséñale a producir lo mismo que tú."],4:["Desarrollo de personas","Te sigue por lo que has hecho por él.","Prepáralo para que desarrolle a otros."],5:["Pináculo","Te sigue por quién eres.","Líderes que forman líderes."]}},
+ duplicacion:{n:"Duplicación",pref:"D",def:1,sub:"Del “yo lo hago” al “tú enseñas”",niv:{1:["Yo lo hago","Aún no participa.","Invítalo a ver cómo lo haces."],2:["Yo lo hago y tú miras","Te acompaña y observa.","Dale una parte pequeña para que la haga."],3:["Tú lo haces y yo miro","Lo hace con tu respaldo.","Dale feedback y suéltalo de a pocos."],4:["Tú lo haces","Lo hace por su cuenta.","Que le enseñe a alguien más."],5:["Tú lo haces y alguien te mira","Ya enseña a su gente.","Reconócelo ante el equipo."]}}};
+const MESES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const MESESL=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const DIAS=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+
+/* ================= Utilidades ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const hoy=()=>iso(new Date());
+function addDias(s,n){const d=new Date(s+"T12:00:00");d.setDate(d.getDate()+Number(n));return iso(d);}
+function diffDias(a,b){return Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);}
+function fmt(s){if(!s||typeof s!=="string")return"";const[y,m,d]=s.split("-");return `${+d} ${MESES[+m-1]}${y!==hoy().slice(0,4)?" "+y:""}`;}
+const diaSemana=s=>DIAS[new Date(s+"T12:00:00").getDay()];
+const uid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-5);
+const ini=n=>String(n||"?").trim().split(/\s+/).slice(0,2).map(w=>w[0]||"").join("").toUpperCase()||"?";
+const primer=n=>String(n||"").trim().split(/\s+/)[0]||"";
+function leer(k,def){try{return localStorage.getItem(k)??def}catch(e){return def}}
+function escribir(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function rnd(n){try{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]/4294967296*n}catch(e){return Math.random()*n}}
+const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
+
+/* ================= Estado ================= */
+let db=null,canWrite=true,cargado=false;
+let socios=[],retos=[],dinamicas=[],eventos=[],mesas=[];
+let vista="inicio",eqSub="reto",hoja=null,abierto=null,editId=null,ejeEdit=null;
+const filtro={q:"",tipo:"",cond:"",lider:""};
+let verLider=leer("rsc-verlider","");if(verLider&&!LIDERES.includes(verLider))verLider="";
+let me=leer("rsc-soy","Johnatan");if(!LIDERES.includes(me))me="Johnatan";
+
+/* ================= Lógica ================= */
+const socio=id=>socios.find(s=>s.id===id);
+const diasAfil=s=>s.fechaAfiliacion?Math.max(0,diffDias(s.fechaAfiliacion,hoy())):null;
+function rutaOf(s){const r={};const e=s.etapas||{};for(const k in e){if(LEGACY[k]&&e[k])r[LEGACY[k]]=e[k];}return Object.assign(r,s.ruta||{});}
+const lideresN=s=>Math.min(5,Math.max(0,Number(s.lideres)||0));
+function hecho(s,k,r){if(k==="lideres5")return lideresN(s)>=5?(s.lideresFecha||hoy()):null;r=r||rutaOf(s);return r[k]||null;}
+function arr(s){const r=rutaOf(s);const n=ARR.filter(p=>hecho(s,p.k,r)).length;return{n,t:ARR.length,next:ARR.find(p=>!hecho(s,p.k,r))||null};}
+function condOf(s){if(Number.isInteger(s.conducta))return s.conducta;const r=rutaOf(s);if(r.afilio1)return 3;if(r.venta||r.pro1)return 2;if(arr(s).n>=3)return 1;return 0;}
+const nivel=(s,eje)=>Number(s[eje])||EJES[eje].def;
+function histOf(s,eje){const h=(s.hist||[]).filter(x=>x.eje===eje);if(eje==="tipo")h.push(...(s.tipoHist||[]).filter(x=>x.de));return h.sort((a,b)=>(a.fecha||"").localeCompare(b.fecha||""));}
+const enArranque=s=>arr(s).n<ARR.length&&(diasAfil(s)??0)<=120;
+const verSocios=()=>socios.filter(s=>!verLider||s.lider===verLider);
+function avatar(s,cls="",pct){const pi=pais(s.pais);const a=arr(s);const p=pct??Math.round(a.n/a.t*100);return `<span class="av ${cls} t${s.tipo||2}" style="--p:${p}"><span>${s.foto?`<img src="${esc(s.foto)}" alt="">`:esc(ini(s.nombre))}</span>${pi&&pi[0]?`<i class="fl">${flag(pi[0])}</i>`:""}</span>`;}
+const cpill=c=>`<span class="cpill c${c}">${ESC[c].n}</span>`;
+function lpick(s,sm){const n=lideresN(s);return `<span class="lpick${sm?" sm":""}">${[1,2,3,4,5].map(i=>`<button type="button" class="lp${i<=n?" on":""}" data-lid="${s.id}" data-n="${i}" aria-label="Conoció ${plural(i,"líder","líderes")}" ${canWrite?"":"disabled"}>${i}</button>`).join("")}</span>`;}
+/* Reto */
+const retoActivo=r=>addDias(r.inicio,r.dias)>=hoy();
+const retosActivos=()=>retos.filter(retoActivo).sort((a,b)=>a.inicio.localeCompare(b.inicio));
+const enRetoIds=()=>{const x=new Set();retosActivos().forEach(r=>(r.socios||[]).forEach(id=>x.add(id)));return x;};
+/* Sorteos */
+const dinActiva=d=>d.fin>=hoy();
+function participa(s,d){if(d.participantes==="todos")return true;if(!s.fechaAfiliacion)return false;return diffDias(s.fechaAfiliacion,d.inicio)<=90;}
+const HITOS_DIN=[["lideres","Cada líder que conoce"],["evconn","Cada evento al que se conecta"],["subeesc","Cada escalón que sube"],...ARR.filter(p=>p.k!=="lideres5").map(p=>[p.k,p.n]),...HITOS.map(p=>[p.k,p.n])];
+function boletos(s,d){if(!participa(s,d))return 0;const r=rutaOf(s);let b=0;const en=f=>f&&typeof f==="string"&&f>=d.inicio&&f<=d.fin;
+  for(const k of d.hitos||[]){
+    if(k==="lideres"||k==="pres"){if(en(s.lideresFecha))b+=lideresN(s);}
+    else if(k==="evconn")b+=eventos.filter(e=>en(e.fecha)&&(e.conv||{})[s.id]==="conecto").length;
+    else if(k==="subeesc")b+=histOf(s,"conducta").filter(h=>en(h.fecha)&&h.a>h.de).length;
+    else if(en(hecho(s,k,r)))b++;}
+  return b;}
+/* Eventos */
+const evProx=()=>eventos.filter(e=>e.fecha>=hoy()).sort((a,b)=>(a.fecha+(a.hora||"")).localeCompare(b.fecha+(b.hora||"")));
+const EST={invitado:"Invitado",confirmo:"Confirmó",conecto:"Se conectó",no:"No pudo"};
+/* Mesa */
+function compromiso(s){let p=0,why=[];const r=rutaOf(s);const c=condOf(s);
+  if(c>=2){p+=Math.min(3,c-1);why.push(ESC[c].n.toLowerCase());}
+  if(Number(s.tipo)>=3){p+=1;why.push(`T${s.tipo}`);}
+  const evs=eventos.filter(e=>(e.conv||{})[s.id]==="conecto").length+(hecho(s,"evento",r)?1:0);if(evs){p+=Math.min(2,evs);why.push("va a eventos");}
+  if(hecho(s,"plan",r)){p+=1;why.push("hizo plan de acción");}
+  if(lideresN(s)>=3){p+=1;why.push(`conoció ${lideresN(s)} líderes`);}
+  return{p:Math.min(8,p),why};}
+
+/* ================= UI helpers ================= */
+function toast(t){const el=$("#toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,2600);}
+function banner(t){const b=$("#banner");b.hidden=!t;b.textContent=t||"";}
+function armar(btn,txt){if(btn.dataset.arm==="1")return true;btn.dataset.arm="1";const o=btn.textContent;btn.textContent=txt;setTimeout(()=>{btn.dataset.arm="";btn.textContent=o},4000);return false;}
+async function guardar(fn,ok){
+  if(!db){toast("Esta vista no puede guardar datos.");return false;}
+  try{await fn();if(ok)toast(ok);return true;}
+  catch(e){const c=e&&e.code;
+    if(c==="invalid_argument"){canWrite=false;banner("No se pudo guardar: revisa que el archivo supabase.sql se haya ejecutado completo.");render();}
+    else if(c==="quota_exceeded")toast("Se llenó el espacio de datos. Elimina registros antiguos.");
+    else toast("No se guardó. Revisa tu conexión e inténtalo otra vez.");
+    return false;}}
+const col=n=>db.collection(n);
+const ref=id=>col("socios").doc(id);
+
+/* ================= Render ================= */
+function render(){
+  document.querySelectorAll(".nb").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===vista)));
+  ["inicio","socios","equipo","sistema"].forEach(v=>$("#v"+v[0].toUpperCase()+v.slice(1)).hidden=vista!==v);
+  const nr=retosActivos().length;const dot=$("#retoDot");dot.hidden=!nr;dot.textContent=nr;
+  $("#fab").hidden=!canWrite||vista==="sistema";
+  renderTop();
+  if(vista==="inicio")renderInicio();if(vista==="socios"){renderFiltros();renderLista();}if(vista==="equipo")renderEquipo();if(vista==="sistema")renderSistema();
+  if(hoja==="socio")renderSocio();if(hoja==="evento")renderEvento();if(hoja==="mesa")renderMesa();
+}
+function renderTop(){
+  const soy=`<label class="soy" for="soy">Soy<select id="soy">${LIDERES.map(l=>`<option${l===me?" selected":""}>${l}</option>`).join("")}</select></label>`;
+  let h;
+  if(vista==="inicio"){
+    const xs=verSocios(),hr=new Date().getHours(),sal=hr<12?"Buenos días":hr<19?"Buenas tardes":"Buenas noches",d=new Date();
+    const er=enRetoIds();
+    h=`<header class="hero"><div class="hin"><div class="htop"><div class="min"><div class="eyebrow">${DIAS[d.getDay()]} ${d.getDate()} de ${MESESL[d.getMonth()]}</div><h1>${sal}, ${esc(me)}</h1></div>${soy}</div>
+      <div class="hchips">${[["","Todo el equipo","var(--hero-ink)"],...LIDERES.map(l=>[l,l,LCOL[l]])].map(([k,n,c])=>`<button class="hchip" data-verlider="${k}" aria-pressed="${verLider===k}" style="--lc:${c}"><i></i>${esc(n)} <span class="mono" style="opacity:.7">${socios.filter(s=>!k||s.lider===k).length}</span></button>`).join("")}</div>
+      <div class="kpis"><button class="kpi" data-goto="socios"><b>${xs.length}</b><span>Socios</span></button><button class="kpi" data-scroll="arranque"><b>${xs.filter(enArranque).length}</b><span>En arranque</span></button><button class="kpi" data-tab="equipo"><b>${xs.filter(s=>er.has(s.id)).length}</b><span>En reto</span></button></div>
+    </div></header>`;
+  }else{
+    const T={socios:["Socios",`${socios.length} en total`],equipo:["Equipo","Reto, eventos, sorteos y mesa"],sistema:["Sistema Fuxion","Tu guía para acompañar a cada socio"]}[vista];
+    h=`<header class="hero" style="padding-block:14px 16px"><div class="hin"><div class="htop"><div class="min"><div class="eyebrow">Gino · Maricielo · Johnatan</div><h1 style="font-size:1.6rem">${T[0]}</h1><p class="sub">${T[1]}</p></div>${soy}</div></div></header>`;
+  }
+  $("#top").innerHTML=h;
+}
+
+/* ---------- Inicio ---------- */
+function renderInicio(){
+  const el=$("#vInicio");
+  if(!cargado&&db){el.innerHTML=`<div class="empty"><h3>Cargando…</h3></div>`;return;}
+  if(!socios.length){el.innerHTML=`<div class="empty"><h3>Agrega a tus socios</h3><p>Nuevos y también los de tiempo con los que sigues en contacto. Con dos o tres toques por socio verás en qué escalón está cada uno y qué enseñarle.</p>${canWrite?'<button class="btn" data-new="socio">Agregar socio</button>':""}</div>`;return;}
+  const xs=verSocios();let h="";
+  const cnt=ESC.map((_,i)=>xs.filter(s=>condOf(s)===i).length);const max=Math.max(1,...cnt);
+  h+=`<div class="sech"><h2>Escalera de conductas</h2><span class="r">${verLider?esc(verLider):"Todo el equipo"}</span></div><div class="box"><div class="ladder">${ESC.map((e,i)=>`<button class="lrow c${i}" data-goto="socios" data-fcond="${i}"><span class="nm"><i></i>${e.n}</span><span class="bar"><i style="width:${cnt[i]/max*100}%"></i></span><span class="v">${cnt[i]}</span></button>`).join("")}</div>
+    <p class="cmeta" style="margin-top:10px">Vender, afiliar, fidelizar, liderar y liderar líderes: las 5 conductas clave. Toca un escalón para ver quiénes están ahí.</p></div>`;
+  const ar=xs.filter(enArranque).sort((a,b)=>(diasAfil(a)??999)-(diasAfil(b)??999));
+  h+=`<div class="sech" id="arranque"><h2>En arranque</h2><span class="r">${ar.length}</span></div>`;
+  h+=ar.length?`<div class="cards">${ar.slice(0,12).map(s=>{const a=arr(s);return `<div class="card t${s.tipo||2}" style="grid-template-columns:auto 1fr">${avatar(s)}<div class="min"><button class="plain" data-open="${s.id}"><span class="cname">${esc(s.nombre)}</span><span class="cmeta">${esc([paisTxt(s.pais),diasAfil(s)!=null?plural(diasAfil(s),"día","días"):"",s.lider].filter(Boolean).join(" · "))}</span></button>
+      <div class="mini"><i style="width:${a.n/a.t*100}%"></i></div>
+      <div style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap"><span class="nextl" style="margin:0">${a.next?(a.next.k==="lideres5"?"Falta: conocer líderes":"Falta: "+esc(a.next.n)):""}</span>${lpick(s,true)}</div></div></div>`;}).join("")}</div>`
+    :`<div class="empty"><h3>Nadie en arranque</h3><p>Todos tus socios recientes completaron su inicio.</p></div>`;
+  const r=retosActivos()[0];
+  if(r){const ss=(r.socios||[]).map(socio).filter(Boolean);const comp=ss.filter(s=>lideresN(s)>=r.meta).length;
+    h+=`<div class="sech"><h2>${esc(r.nombre)}</h2><span class="r">${plural(Math.max(0,diffDias(hoy(),addDias(r.inicio,r.dias))),"día","días")}</span></div><button class="evc" data-tab="equipo"><span class="cal" style="background:var(--accent-soft);color:var(--accent)"><b>${comp}</b><span>de ${ss.length}</span></span><span class="min"><span class="cname">Socios que ya conocieron ${r.meta} líderes</span><span class="cmeta">${esc(ss.map(s=>`${primer(s.nombre)} ${lideresN(s)}/${r.meta}`).join(" · "))}</span></span><span style="color:var(--muted)">›</span></button>`;}
+  const ev=evProx()[0];
+  if(ev){const cv=ev.conv||{};const n=k=>Object.values(cv).filter(x=>x===k).length;
+    h+=`<div class="sech"><h2>Próximo evento</h2></div><button class="evc" data-open-evento="${ev.id}"><span class="cal"><b>${+ev.fecha.slice(8)}</b><span>${MESES[+ev.fecha.slice(5,7)-1]}</span></span><span class="min"><span class="cname">${esc(ev.nombre)}</span><span class="cmeta">${diaSemana(ev.fecha)}${ev.hora?" · "+esc(ev.hora):""} · ${esc(ev.modo||"")}</span></span><span class="tag w">${n("confirmo")} confirmaron</span></button>`;}
+  el.innerHTML=h;
+}
+
+/* ---------- Socios ---------- */
+function renderFiltros(){
+  const cnt=f=>socios.filter(f).length;
+  let h=`<button class="chip" data-fall aria-pressed="${!filtro.tipo&&filtro.cond===""&&!filtro.lider}">Todos <span class="n">${socios.length}</span></button>`;
+  ESC.forEach((e,i)=>h+=`<button class="chip c${i}" data-fcond="${i}" aria-pressed="${filtro.cond===String(i)}"><i></i>${e.n} <span class="n">${cnt(s=>condOf(s)===i)}</span></button>`);
+  $("#fil").innerHTML=h;
+  let h2="";for(const t in EJES.tipo.niv)h2+=`<button class="chip t${t}" data-ftipo="${t}" aria-pressed="${filtro.tipo===t}"><i></i>T${t} ${EJES.tipo.niv[t][0]}</button>`;
+  h2+=`<span style="flex:none;width:1px;background:var(--line);margin:4px 2px"></span>`;
+  for(const l of LIDERES)h2+=`<button class="chip" data-flider="${l}" aria-pressed="${filtro.lider===l}" style="--lc:${LCOL[l]}"><i></i>${l}</button>`;
+  $("#fil2").innerHTML=h2;
+}
+function renderLista(){
+  const el=$("#lista");if(!cargado&&db){el.innerHTML=`<div class="empty"><h3>Cargando…</h3></div>`;return;}
+  if(!socios.length){$("#listCount").textContent="";el.innerHTML=`<div class="empty"><h3>Aún no hay socios</h3>${canWrite?'<button class="btn" data-new="socio">Agregar socio</button>':""}</div>`;return;}
+  const q=filtro.q.trim().toLowerCase();
+  const xs=socios.filter(s=>(!filtro.tipo||String(s.tipo)===filtro.tipo)&&(filtro.cond===""||condOf(s)===+filtro.cond)&&(!filtro.lider||s.lider===filtro.lider)&&(!q||[s.nombre,s.codigo,pais(s.pais)?.[1]].join(" ").toLowerCase().includes(q)))
+    .sort((a,b)=>condOf(b)-condOf(a)||(b.fechaAfiliacion||"").localeCompare(a.fechaAfiliacion||""));
+  $("#listCount").textContent=`${xs.length} de ${socios.length}`;
+  $("#listTitle").textContent=filtro.cond!==""?`Escalón: ${ESC[+filtro.cond].n}`:filtro.tipo?`T${filtro.tipo} · ${EJES.tipo.niv[filtro.tipo][0]}`:filtro.lider?`Socios de ${filtro.lider}`:"Socios";
+  if(!xs.length){el.innerHTML=`<div class="empty"><h3>Ningún socio coincide</h3><p>Cambia el filtro o la búsqueda.</p></div>`;return;}
+  const er=enRetoIds();
+  el.innerHTML=`<div class="cards">${xs.map(s=>{const a=arr(s);const c=condOf(s);
+    return `<button class="card t${s.tipo||2}" data-open="${s.id}">${avatar(s)}<span class="min"><span class="cname">${esc(s.nombre)}</span><span class="cmeta">${esc([pais(s.pais)?.[1],s.codigo,s.lider].filter(Boolean).join(" · "))}</span><span style="display:flex;gap:5px;flex-wrap:wrap;margin-top:6px">${cpill(c)}${a.n<a.t?`<span class="tag">Arranque ${a.n}/${a.t}</span>`:""}</span></span>
+      <span class="cside"><span class="tpill">T${s.tipo||2}</span><span class="tag${er.has(s.id)?" w":""}">👥 ${lideresN(s)}/5</span></span></button>`;}).join("")}</div>`;
+}
+
+/* ---------- Equipo ---------- */
+function renderEquipo(){
+  const subs=[["reto","Reto"],["eventos","Eventos"],["sorteos","Sorteos"],["mesa","Mesa"]];
+  let h=`<div class="seg" style="margin-bottom:14px">${subs.map(([k,n])=>`<button data-eq="${k}" aria-pressed="${eqSub===k}">${n}</button>`).join("")}</div>`;
+  h+={reto:eqReto,eventos:eqEventos,sorteos:eqSorteos,mesa:eqMesa}[eqSub]();
+  $("#vEquipo").innerHTML=h;
+}
+function eqReto(){
+  const act=retosActivos(),fin=retos.filter(r=>!retoActivo(r)).sort((a,b)=>b.inicio.localeCompare(a.inicio));
+  let h=`<p class="muted" style="margin:0 2px 12px;font-size:.88rem">Elijan 2 o 3 socios clave y preséntenle a cada uno 5 líderes. Marquen con un toque cuántos conoció.</p>`;
+  if(!act.length)h+=`<div class="empty"><h3>No hay un reto en curso</h3>${canWrite?'<button class="btn" data-new="reto">Crear reto 5 en 14</button>':""}</div>`;
+  h+=act.map(tarjetaReto).join("");
+  if(fin.length)h+=`<details class="past"><summary>Retos terminados · ${fin.length} ▾</summary>${fin.map(tarjetaReto).join("")}</details>`;
+  return h;
+}
+function tarjetaReto(r){
+  const fin=addDias(r.inicio,r.dias),t=hoy(),ss=(r.socios||[]).map(socio).filter(Boolean);
+  let num,cap,pct;if(t<r.inicio){num=diffDias(t,r.inicio);cap="para iniciar";pct=0;}else if(t<=fin){num=diffDias(t,fin);cap=num===1?"día":"días";pct=Math.min(100,(diffDias(r.inicio,t)+1)/r.dias*100);}else{num="✓";cap="terminó";pct=100;}
+  const rank=LIDERES.map(l=>{const m=ss.filter(s=>s.lider===l);return{l,n:m.reduce((a,s)=>a+lideresN(s),0),k:m.length}});
+  const max=Math.max(1,...rank.map(x=>x.n)),top=Math.max(...rank.map(x=>x.n));const comp=ss.filter(s=>lideresN(s)>=r.meta).length;
+  return `<article class="ccard"><div class="ctop"><div class="min"><h3>${esc(r.nombre)}</h3><p class="cmeta">${fmt(r.inicio)} → ${fmt(fin)} · ${r.meta} líderes por socio</p><p style="margin-top:8px"><span class="tag${comp&&comp===ss.length?" ok":""}">${comp} de ${ss.length} socios completos</span></p></div><div class="ring" style="--p:${pct}"><div><b>${num}</b><small>${cap}</small></div></div></div>
+    <div><div class="lbl">Toca cuántos líderes conoció</div>${ss.length?ss.map(s=>`<div class="rrow">${avatar(s,"sm",Math.min(100,lideresN(s)/r.meta*100))}<button class="plain min" data-open="${s.id}"><span class="cname" style="font-size:.95rem">${esc(s.nombre)}</span><span class="cmeta">${esc(s.lider)}</span></button>${lpick(s,true)}</div>`).join(""):'<p class="muted">Sin socios. Edita el reto para elegirlos.</p>'}</div>
+    <div><div class="lbl">Ranking por líder</div><div class="podium">${rank.map(x=>`<div class="pod${x.n&&x.n===top?" lead":""}" style="--lc:${LCOL[x.l]}"><div class="cnt">${x.n}<small>${plural(x.k,"socio","socios")}</small></div><div class="col" style="height:${Math.max(6,x.n/max*68)}%"></div><div class="nm">${x.l}</div></div>`).join("")}</div></div>
+    ${canWrite?`<div><button class="btn ghost sm" data-edit-reto="${r.id}">Editar reto</button></div>`:""}</article>`;
+}
+function eqEventos(){
+  const prox=evProx(),pas=eventos.filter(e=>e.fecha<hoy()).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  let h=`<p class="muted" style="margin:0 2px 12px;font-size:.88rem">Convoca a tus socios y marca quién confirmó y quién se conectó. Al marcar "Se conectó" se registra su primer evento.</p>`;
+  if(!prox.length)h+=`<div class="empty"><h3>Sin eventos próximos</h3>${canWrite?'<button class="btn" data-new="evento">Crear evento</button>':""}</div>`;
+  const card=e=>{const cv=e.conv||{};const n=k=>Object.values(cv).filter(x=>x===k).length;
+    return `<button class="evc" data-open-evento="${e.id}"><span class="cal"><b>${+e.fecha.slice(8)}</b><span>${MESES[+e.fecha.slice(5,7)-1]}</span></span><span class="min"><span class="cname">${esc(e.nombre)}</span><span class="cmeta">${diaSemana(e.fecha)}${e.hora?" · "+esc(e.hora):""} · ${esc(e.modo||"")}</span><span class="cmeta">${Object.keys(cv).length} convocados · ${n("confirmo")} confirmaron · ${n("conecto")} se conectaron</span></span><span style="color:var(--muted)">›</span></button>`;};
+  h+=prox.map(card).join("");
+  if(pas.length)h+=`<details class="past"><summary>Eventos pasados · ${pas.length} ▾</summary>${pas.map(card).join("")}</details>`;
+  return h;
+}
+function eqSorteos(){
+  const act=dinamicas.filter(dinActiva).sort((a,b)=>a.fin.localeCompare(b.fin)),fin=dinamicas.filter(d=>!dinActiva(d)).sort((a,b)=>b.fin.localeCompare(a.fin));
+  let h=`<p class="muted" style="margin:0 2px 12px;font-size:.88rem">Retos para tus socios: cada logro dentro de las fechas les da un boleto. Al final sorteas el premio.</p>`;
+  if(!act.length)h+=`<div class="empty"><h3>Sin sorteos activos</h3><p>Ejemplo: "Arranque de ${MESESL[new Date().getMonth()]}": boletos por inducción, primer evento, primera venta y cada líder que conocen.</p>${canWrite?'<button class="btn" data-new="din">Crear sorteo</button>':""}</div>`;
+  h+=act.map(tarjetaDin).join("");
+  if(fin.length)h+=`<details class="past"><summary>Sorteos terminados · ${fin.length} ▾</summary>${fin.map(tarjetaDin).join("")}</details>`;
+  return h;
+}
+function tarjetaDin(d){
+  const rows=socios.filter(s=>participa(s,d)).map(s=>({s,b:boletos(s,d)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);const tot=rows.reduce((a,x)=>a+x.b,0);const q=diffDias(hoy(),d.fin);
+  return `<article class="ccard"><div class="ctop"><div class="min"><h3>${esc(d.nombre)}</h3><p class="cmeta">${fmt(d.inicio)} → ${fmt(d.fin)} · ${d.participantes==="todos"?"todos los socios":"socios nuevos"}</p>${d.premio?`<p style="margin-top:8px"><span class="tag g">🎁 ${esc(d.premio)}</span></p>`:""}</div><div class="ring" style="--p:${Math.min(100,Math.max(0,(diffDias(d.inicio,hoy())+1)/(diffDias(d.inicio,d.fin)+1)*100))}"><div><b>${q>=0?q:"✓"}</b><small>${q>=0?(q===1?"día":"días"):"terminó"}</small></div></div></div>
+    <div class="funnel"><span class="tag">${rows.length} participando</span><span class="tag">${plural(tot,"boleto","boletos")}</span>${(d.ganadores||[]).map(g=>`<span class="tag ok">🏆 ${esc(g.nombre)}</span>`).join("")}</div>
+    <div>${rows.length?rows.slice(0,10).map((x,i)=>`<button class="rk plain" data-open="${x.s.id}"><span class="pos">${i+1}</span>${avatar(x.s,"sm")}<span class="cname min" style="font-size:.92rem">${esc(x.s.nombre)}</span><span class="tix">🎟 ${x.b}</span></button>`).join(""):`<p class="muted">Aún nadie suma boletos.</p>`}</div>
+    ${canWrite?`<div class="row-end" style="justify-content:space-between"><button class="btn ghost sm" data-edit-din="${d.id}">Editar</button><button class="btn sm" data-sortear="${d.id}" ${rows.length?"":"disabled"}>🎲 Sortear</button></div>`:""}</article>`;
+}
+function eqMesa(){
+  const cands=socios.map(s=>({s,...compromiso(s)})).filter(x=>x.p>=3).sort((a,b)=>b.p-a.p);let h="";
+  if(mesas.length)h+=mesas.map(m=>{const ms=(m.miembros||[]).map(socio).filter(Boolean);const ses=[...(m.sesiones||[])].sort((a,b)=>b.fecha.localeCompare(a.fecha));const u=ses[0];
+    return `<article class="ccard"><div class="min"><h3 style="font-size:1.25rem">${esc(m.nombre)}</h3><p class="cmeta">📖 ${esc(m.libro||"Libro por definir")} · ${esc(m.ritmo||"")}</p></div><div class="stack">${ms.slice(0,8).map(s=>avatar(s,"sm")).join("")}</div>
+      <div class="funnel"><span class="tag">${plural(ms.length,"miembro","miembros")}</span><span class="tag">${plural(ses.length,"sesión","sesiones")}</span>${u?`<span class="tag ok">Última: ${fmt(u.fecha)} · ${(u.asistentes||[]).length}/${ms.length}</span>`:""}</div><div><button class="btn soft sm" data-open-mesa="${m.id}">Abrir mesa</button></div></article>`;}).join("");
+  else h+=`<div class="empty"><h3>Mesa de desarrollo</h3><p>Un grupo pequeño y constante: club de lectura, crecimiento personal y duplicación. Con 3 a 5 personas comprometidas ya puedes empezar.</p>${canWrite?'<button class="btn" data-new="mesa">Crear mesa</button>':""}</div>`;
+  h+=`<div class="sech"><h2>Candidatos con compromiso</h2><span class="r">${cands.length}</span></div>`;
+  h+=cands.length?`<div class="box" style="padding:6px 14px">${cands.slice(0,12).map(x=>`<div class="cand">${avatar(x.s,"sm")}<button class="plain min" data-open="${x.s.id}"><span class="cname" style="font-size:.92rem">${esc(x.s.nombre)}</span><span class="cmeta">${esc(x.why.join(" · "))}</span></button><span class="score" title="${x.p} de 8">${Array.from({length:8},(_,i)=>`<i class="${i<x.p?"on":""}"></i>`).join("")}</span></div>`).join("")}</div>
+    <p class="muted" style="margin:10px 2px 0;font-size:.84rem">${cands.length>=3?`Tienes ${cands.length} socios con señales de compromiso: suficiente para arrancar una mesa pequeña.`:"Aún pocos. Aparecen solos a medida que suben en la escalera, van a eventos o hacen su plan de acción."}</p>`
+    :`<p class="muted" style="margin:0 2px">Aparecen aquí los socios que ya venden o más, T3 o más, que van a eventos o hicieron su plan de acción.</p>`;
+  return h;
+}
+
+/* ---------- Sistema (guía) ---------- */
+function renderSistema(){
+  const xs=verSocios();
+  const g=(ic,t,sub,body,open)=>`<details class="gcard"${open?" open":""}><summary><span class="ic">${ic}</span><span class="min"><b>${t}</b><small>${sub}</small></span><span class="chev">›</span></summary><div class="gbody">${body}</div></details>`;
+  const li=(n,t,sm,how,cls="",style="")=>`<div class="gi ${cls}" style="${style}"><span class="n">${n}</span><div class="min"><b>${t}</b>${sm?`<small>${sm}</small>`:""}${how?`<span class="how">${how}</span>`:""}</div></div>`;
+  let h=`<div class="guide">`;
+  h+=g("🪜","La escalera de conductas","Del arranque a liderar líderes",ESC.map((e,i)=>li(i,`${e.n} · ${plural(xs.filter(s=>condOf(s)===i).length,"socio","socios")}`,e.d,e.ens,`cc c${i}`)).join("")+`<p class="note-src">Las 5 conductas de Fuxion son los pilares de su modelo de éxito y liderazgo. Arranque y Consume son los pasos previos que usamos en el equipo.</p>`,true);
+  h+=g("🛠️","Las 5 habilidades básicas","Las maestrías de duplicación",HABS.map((x,i)=>li(i+1,x.n,x.d,"AWARE: "+x.aw)).join(""));
+  h+=g("🎬","AWARE Play","Herramientas oficiales para compartir y formarte",
+    `<div class="lbl" style="margin:0">Videos, en el orden de uso</div>${[["Filtro","La parábola que lo cambió todo: el ingreso residual."],["Industria","El bienestar como industria en crecimiento."],["Producto","Un producto único."],["Negocio","La oportunidad, con presentación descargable."],["Seguimiento","Ayuda a la persona a decidir."]].map((v,i)=>li(i+1,v[0],v[1])).join("")}
+     <div class="lbl" style="margin:10px 0 0">Módulos de formación</div>${["Base de datos de contactos","Prospección e invitación","Presentación profesional (3 pasos)","Seguimiento (10 tips)","Trabajo con el nuevo socio"].map((v,i)=>li(i+1,v)).join("")}
+     <a class="btn soft" style="margin-top:8px" href="${AWARE}" target="_blank" rel="noopener">Abrir AWARE Play ↗</a>`);
+  h+=g("🧭","Arranque del nuevo socio","Lo que retiene en las primeras semanas",ARR.map((p,i)=>li(i+1,p.n,p.s)).join("")+`<p class="note-src">Conocer 5 líderes y Fuxion Connect generan la relación que evita que el socio se enfríe.</p>`);
+  h+=g("🎯","Metas del plan de acción","Pro 1 y primeras afiliaciones",[["Lista","200 contactos; elige tus 30 mejores para las primeras 48 horas."],["Pro 1","6 clientes preferentes registrados y 25 productos (~500 puntos)."],["Negocio","Tus 5 primeras afiliaciones."]].map((v,i)=>li(i+1,v[0],v[1])).join(""));
+  h+=g("🔁","Hábitos que duplican","Lo que el equipo copia de su líder",[["Producto del producto","Consume y comparte su testimonio."],["Eventos","Asiste y lleva a su gente."],["Metas claras","Corto, mediano y largo plazo."],["Invertir en crecer","Libros y capacitación."],["Edificar","Hablar bien de otros líderes."],["Constancia","Siempre presentando, haciendo seguimiento y llevando invitados."]].map((v,i)=>li(i+1,v[0],v[1])).join(""));
+  h+=g("📈","Liderazgo y duplicación","Referencia para cada socio",
+    `<div class="lbl" style="margin:0">5 niveles de liderazgo · John Maxwell</div>${Object.entries(EJES.liderazgo.niv).map(([k,v])=>li("L"+k,v[0],v[1])).join("")}
+     <div class="lbl" style="margin:10px 0 0">Duplicación · El líder de 360°</div>${Object.entries(EJES.duplicacion.niv).map(([k,v])=>li("D"+k,v[0])).join("")}`);
+  h+=g("🏷️","Tipos de socio","Según lo que busca",Object.entries(EJES.tipo.niv).map(([k,v])=>li("T"+k,v[0],v[1],v[2],`cc t${k}`,"--cc:var(--tc)")).join(""));
+  h+=`</div>`;
+  $("#vSistema").innerHTML=h;
+}
+
+/* ================= Hojas ================= */
+function abrirHoja(html){const sh=$("#sheet");sh.innerHTML=`<div class="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle"><div class="grab"></div>${html}</div>`;sh.hidden=false;document.body.style.overflow="hidden";}
+function cerrar(){$("#sheet").hidden=true;$("#sheet").innerHTML="";hoja=null;abierto=null;editId=null;ejeEdit=null;document.body.style.overflow="";}
+const xBtn=`<button class="x" data-close aria-label="Cerrar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+const optsL=sel=>LIDERES.map(l=>`<option${l===sel?" selected":""}>${l}</option>`).join("");
+function optsPais(sel){const c=pais(sel)?.[0]||"PE";return [...new Set(PAISES.map(p=>p[2]))].map(r=>`<optgroup label="${r}">${PAISES.filter(p=>p[2]===r).map(p=>`<option value="${p[0]}"${p[0]===c?" selected":""}>${flag(p[0])} ${p[1]}</option>`).join("")}</optgroup>`).join("");}
+function opcionesEje(eje,sel,actual,name){
+  if(eje==="conducta")return `<div class="topts">${ESC.map((e,k)=>`<label class="topt c${k}" style="--tc:var(--cc)"><input type="radio" name="${name}" value="${k}"${k===+sel?" checked":""}><span class="lvl" style="background:var(--cc);color:var(--surface)">${k}</span><span class="min"><b>${e.n}${actual!=null&&k===+actual?'<span class="cur">Actual</span>':""}</b><small>${esc(e.d)}</small></span></label>`).join("")}</div>`;
+  const E=EJES[eje];return `<div class="topts">${Object.entries(E.niv).map(([k,v])=>`<label class="topt${eje==="tipo"?" t"+k:""}"><input type="radio" name="${name}" value="${k}"${+k===+sel?" checked":""}><span class="lvl${eje==="tipo"?"":" alt"}">${E.pref}${k}</span><span class="min"><b>${v[0]}${actual&&+k===+actual?'<span class="cur">Actual</span>':""}</b><small>${esc(v[1])}</small></span></label>`).join("")}</div>`;}
+
+function hojaSocioForm(s){
+  hoja="socioForm";editId=s?s.id:null;
+  const otros=socios.filter(x=>!s||x.id!==s.id).sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  abrirHoja(`<div class="shero t${s?.tipo||2}">${xBtn}<h2 id="pTitle" style="font-size:1.5rem;padding-right:44px">${s?"Editar datos":"Nuevo socio"}</h2><p class="cmeta">Nuevos o de tiempo: todos con los que mantienes relación.</p></div>
+  <form id="fSocio" class="sbody"><div class="box form">
+      <label class="f full" for="sNombre">Nombre completo<input id="sNombre" required value="${esc(s?.nombre)}" autocomplete="off"></label>
+      <label class="f" for="sPais">País<select id="sPais">${optsPais(s?.pais)}</select></label>
+      <label class="f" for="sCodigo">Código Fuxion<input id="sCodigo" value="${esc(s?.codigo)}" inputmode="numeric" autocomplete="off"></label>
+      <label class="f" for="sFecha">Fecha de afiliación<input id="sFecha" type="date" value="${esc(s?.fechaAfiliacion||hoy())}"></label>
+      <label class="f" for="sLider">Líder responsable<select id="sLider">${optsL(s?s.lider:me)}</select></label>
+      <label class="f" for="sTel">Celular (opcional)<input id="sTel" type="tel" inputmode="tel" value="${esc(s?.telefono)}" autocomplete="off"></label>
+      <label class="f" for="sPatro">Lo patrocinó<select id="sPatro"><option value="">Directo (líder)</option>${otros.map(x=>`<option value="${x.id}"${s?.patrocinadorId===x.id?" selected":""}>${esc(x.nombre)}</option>`).join("")}</select></label>
+      <label class="f full" for="sObj">Su objetivo (opcional)<input id="sObj" value="${esc(s?.objetivo)}" placeholder="Ej.: bajar de peso, un ingreso extra"></label></div>
+    ${s?"":`<div class="box"><h4>¿Qué tipo de socio es?</h4>${opcionesEje("tipo",2,null,"sTipo")}</div><div class="box"><h4>¿En qué escalón está hoy?</h4><p class="cmeta" style="margin:-6px 0 10px">Si es nuevo, déjalo en Arranque.</p>${opcionesEje("conducta",0,null,"sCond")}</div>`}
+    <div class="row-end"><button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn" type="submit">${s?"Guardar cambios":"Agregar socio"}</button></div></form>`);
+  setTimeout(()=>$("#sNombre")?.focus(),60);
+}
+function hojaSocio(id){
+  hoja="socio";abierto=id;ejeEdit=null;
+  abrirHoja(`<div id="sHero"></div><div class="sbody"><div id="sCond"></div><div id="sArr"></div><div id="sHitos"></div><div id="sEjes"></div><div id="sRed"></div>
+    <div class="box"><h4>Notas</h4><form id="fNota" data-w style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px"><textarea id="nTexto" required placeholder="Su familia, su trabajo, lo que conversaron…" aria-label="Nueva nota" style="min-height:60px"></textarea><div class="row-end"><button class="btn sm" type="submit">Guardar nota</button></div></form><div id="sNotas"></div></div>
+    <div id="sDatos"></div></div>
+    <div class="foot" data-w><button class="btn ghost sm" data-edit-socio>Editar datos</button><button class="btn danger sm" data-del-socio>Eliminar socio</button></div>`);
+  document.querySelectorAll("#sheet [data-w]").forEach(x=>x.hidden=!canWrite);
+  renderSocio();
+}
+function renderSocio(){
+  const s=socio(abierto);if(!s){cerrar();return;}
+  const c=condOf(s),E=ESC[c],d=diasAfil(s);
+  const hero=$("#sHero");hero.className=`shero t${s.tipo||2}`;
+  hero.innerHTML=`${xBtn}<div class="shtop">${avatar(s,"lg")}<div class="min"><h2 id="pTitle">${esc(s.nombre)}</h2><p class="cmeta">${esc([paisTxt(s.pais),s.codigo&&"Código "+s.codigo].filter(Boolean).join(" · "))}</p><p class="cmeta">${esc([d!=null?`Afiliado hace ${plural(d,"día","días")}`:"","Líder: "+s.lider].filter(Boolean).join(" · "))}</p></div></div>
+    ${s.objetivo?`<div class="obj"><b>Objetivo</b>${esc(s.objetivo)}</div>`:""}`;
+  if(ejeEdit!=="conducta"){
+    const hab=HABS.find(x=>x.k===(s.habilidad||E.hab));const hc=histOf(s,"conducta");
+    $("#sCond").innerHTML=`<div class="box cond c${c}"><div class="lbl" style="margin-bottom:4px">Escalera de conductas</div><div class="condhead"><b>${E.n}</b>${canWrite?'<button class="btn soft sm" data-eje="conducta">Cambiar</button>':""}</div><p class="cmeta">${E.d}</p>
+      <div class="steps7">${ESC.map((x,i)=>`<div class="st7 c${i}${i<=c?" on":""}${i===c?" cur":""}"><span class="d"></span><small>${x.n}</small></div>`).join("")}</div>
+      <div class="teach"><strong>Qué enseñarle ahora</strong>${E.ens}</div>
+      <div style="margin-top:12px"><div class="lbl" style="margin-bottom:2px">Habilidad que está trabajando</div><div class="habs">${HABS.map(x=>`<button class="hab" data-hab="${x.k}" aria-pressed="${!!s.habilidad&&s.habilidad===x.k}" ${canWrite?"":"disabled"}>${x.n}</button>`).join("")}</div>
+      ${hab?`<p class="cmeta" style="margin-top:8px">${s.habilidad?"":"Sugerida para su escalón: "}<b>${hab.n}</b> · ${hab.d}</p><a class="awl" href="${AWARE}" target="_blank" rel="noopener">AWARE: ${esc(hab.aw)} ↗</a>`:`<a class="awl" href="${AWARE}" target="_blank" rel="noopener">AWARE: ${esc(E.aw)} ↗</a>`}</div>
+      ${hc.length?`<div class="evo" style="margin-top:10px">${hc.slice(-3).reverse().map(h=>`<span>${ESC[h.de].n} → ${ESC[h.a].n} · ${fmt(h.fecha)}</span>`).join("")}</div>`:""}</div>`;
+  }
+  const r=rutaOf(s),a=arr(s);
+  $("#sArr").innerHTML=`<div class="box"><div class="ckhead"><h4 style="margin:0">Arranque</h4><span>${a.n}/${a.t}</span></div><div class="mini"><i style="width:${a.n/a.t*100}%"></i></div><ul class="checks">${ARR.map(p=>{const f=hecho(s,p.k,r);
+    if(p.k==="lideres5")return `<li class="${f?"done":""}"><div class="ckrow"><div class="ck"><span class="box2">${f?"✓":""}</span><span class="min"><b>${p.n} <span class="mono muted" style="font-weight:600">${lideresN(s)}/5</span></b><span style="display:block;margin-top:6px">${lpick(s,true)}</span></span></div>${fechaIn(p.k,f&&s.lideresFecha)}</div></li>`;
+    return filaPaso(p,f);}).join("")}</ul></div>`;
+  $("#sHitos").innerHTML=`<div class="box"><h4>Hitos</h4><ul class="checks">${HITOS.map(p=>filaPaso(p,hecho(s,p.k,r))).join("")}</ul></div>`;
+  if(!ejeEdit||ejeEdit==="conducta")renderEjes(s);
+  const gente=socios.filter(x=>x.patrocinadorId===s.id),pat=s.patrocinadorId&&socio(s.patrocinadorId);
+  $("#sRed").innerHTML=(gente.length||pat)?`<div class="box"><h4>Su red</h4>${pat?`<p class="cmeta" style="margin-bottom:8px">Lo patrocinó <button class="plain" style="color:var(--accent);font-weight:700" data-open="${pat.id}">${esc(pat.nombre)}</button></p>`:""}${gente.length?`<div class="list" style="box-shadow:none;border:1px solid var(--line)">${gente.map(g=>`<button class="it" data-open="${g.id}">${avatar(g,"sm")}<span class="min"><b>${esc(g.nombre)}</b><span class="meta">T${g.tipo||2} · Arranque ${arr(g).n}/${ARR.length}</span></span>${cpill(condOf(g))}</button>`).join("")}</div>`:""}</div>`:"";
+  const ns=[...(s.notas||[])].sort((a,b)=>(b.ts||0)-(a.ts||0));
+  $("#sNotas").innerHTML=ns.length?`<div class="notes">${ns.map(n=>`<div class="note" style="--lc:${LCOL[n.autor]||"var(--accent)"}"><p>${esc(n.texto)}</p><div class="by"><span><b>${esc(n.autor)}</b> · ${fmt(n.fecha)}</span>${canWrite?`<button class="del" data-nota-del="${n.id}">Borrar</button>`:""}</div></div>`).join("")}</div>`:`<p class="cmeta">Sin notas todavía.</p>`;
+  $("#sDatos").innerHTML=`<div class="box"><h4>Foto</h4><div class="photo">${avatar(s,"lg")}<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start">${canWrite?`<button class="btn soft sm" data-foto>${s.foto?"Cambiar foto":"Subir foto"}</button>${s.foto?'<button class="del" data-foto-del>Quitar foto</button>':""}`:""}${s.telefono?`<span class="cmeta">Cel: <span class="mono">${esc(s.telefono)}</span></span>`:""}</div></div></div>`;
+}
+function fechaIn(k,f){if(!f||typeof f!=="string")return"";return canWrite?`<input type="date" class="fd" data-fecha="${k}" value="${esc(f)}" max="${hoy()}" aria-label="Fecha">`:`<span class="sdate">${fmt(f)}</span>`;}
+function filaPaso(p,f){return `<li class="${f?"done":""}${p.star?" star":""}"><div class="ckrow"><button class="ck" data-paso="${p.k}" ${canWrite?"":"disabled"}><span class="box2">${f?(p.star?"★":"✓"):""}</span><span class="min"><b>${p.n}</b>${p.s?`<small>${p.s}</small>`:""}</span></button>${fechaIn(p.k,f)}</div></li>`;}
+function renderEjes(s){
+  $("#sEjes").innerHTML=`<div class="box"><h4>Perfil</h4>${["tipo","liderazgo","duplicacion"].map(eje=>{const E=EJES[eje],v=nivel(s,eje),N=E.niv[v],h=histOf(s,eje);
+    return `<div class="eje${eje==="tipo"?" t"+v:""}"><span class="lvl${eje==="tipo"?"":" alt"}">${E.pref}${v}</span><div class="min"><small>${E.n}</small><b>${N[0]}</b><small>${esc(N[2])}</small>${h.length?`<div class="evo">${h.slice(-2).reverse().map(x=>`<span>${E.pref}${x.de}→${E.pref}${x.a} · ${fmt(x.fecha)}</span>`).join("")}</div>`:""}</div>${canWrite?`<button class="btn soft sm" data-eje="${eje}">Cambiar</button>`:""}</div>`;}).join("")}</div>`;
+}
+function renderEjeCambio(s,eje){
+  const isC=eje==="conducta",v=isC?condOf(s):nivel(s,eje),t=isC?"Escalera: ¿en qué escalón está":`${EJES[eje].n}: ¿en qué nivel está`;
+  $(isC?"#sCond":"#sEjes").innerHTML=`<form class="box" id="fEje" data-eje-form="${eje}"><h4>${t} ${esc(primer(s.nombre))}?</h4>${!isC&&EJES[eje].sub?`<p class="cmeta" style="margin:-6px 0 10px">${EJES[eje].sub}</p>`:""}${opcionesEje(eje,v,v,"nEje")}
+    <label class="f" for="eMotivo" style="margin-top:12px">¿Qué cambió? (opcional, queda en sus notas)<textarea id="eMotivo" style="min-height:56px"></textarea></label>
+    <div class="row-end" style="margin-top:12px"><button type="button" class="btn ghost" data-eje-cancelar>Cancelar</button><button class="btn" type="submit" id="eConfirmar" disabled>Confirmar cambio</button></div></form>`;
+  $("#fEje").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function hojaReto(r){
+  hoja="retoForm";editId=r?r.id:null;const sel=new Set(r?r.socios||[]:[]);
+  const xs=[...socios].sort((a,b)=>(diasAfil(a)??999)-(diasAfil(b)??999));
+  abrirHoja(`<div class="shero" style="--tc:var(--warm)">${xBtn}<div style="padding-right:44px"><div class="lbl" style="margin:0">Reto entre Gino, Maricielo y Johnatan</div><h2 id="pTitle" style="font-size:1.5rem;margin-top:4px">${r?"Editar reto":"Nuevo reto"}</h2></div></div>
+  <form id="fReto" class="sbody"><div class="box form">
+    <label class="f full" for="rNombre">Nombre<input id="rNombre" required value="${esc(r?r.nombre:"Reto 5 en 14")}"></label>
+    <label class="f" for="rInicio">Empieza<input id="rInicio" type="date" required value="${esc(r?r.inicio:hoy())}"></label>
+    <label class="f" for="rDias">Duración (días)<input id="rDias" type="number" min="1" max="120" required value="${r?r.dias:14}"></label>
+    <label class="f full" for="rMeta">Líderes por socio<input id="rMeta" type="number" min="1" max="5" required value="${r?r.meta:5}"></label></div>
+    <div class="box"><h4>Socios en el reto</h4>${xs.length?`<div class="pick">${xs.map(s=>`<label><input type="checkbox" name="rs" value="${s.id}"${sel.has(s.id)?" checked":""}>${avatar(s,"sm")}<span class="min"><b>${esc(s.nombre)}</b> <span class="muted">· ${esc(s.lider)}</span></span></label>`).join("")}</div>`:'<p class="muted">Primero agrega socios.</p>'}</div>
+    <div class="row-end">${r?'<button type="button" class="btn danger" data-del-reto>Eliminar</button>':""}<button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn" type="submit">${r?"Guardar":"Iniciar reto"}</button></div></form>`);
+}
+function hojaDin(d){
+  hoja="dinForm";editId=d?d.id:null;const sel=new Set(d?d.hitos:["foto","grupos","induccion","connect","evento","evconn","lideres","venta","pro1","afilio1"]);
+  abrirHoja(`<div class="shero" style="--tc:var(--gold)">${xBtn}<div style="padding-right:44px"><div class="lbl" style="margin:0">Reto y sorteo para socios</div><h2 id="pTitle" style="font-size:1.5rem;margin-top:4px">${d?"Editar sorteo":"Nuevo sorteo"}</h2></div></div>
+  <form id="fDin" class="sbody"><div class="box form">
+    <label class="f full" for="dNombre">Nombre<input id="dNombre" required value="${esc(d?d.nombre:"Arranque de "+MESESL[new Date().getMonth()])}"></label>
+    <label class="f full" for="dPremio">Premio<input id="dPremio" value="${esc(d?.premio)}" placeholder="Ej.: un producto, un kit"></label>
+    <label class="f" for="dInicio">Empieza<input id="dInicio" type="date" required value="${esc(d?d.inicio:hoy())}"></label>
+    <label class="f" for="dFin">Termina<input id="dFin" type="date" required value="${esc(d?d.fin:addDias(hoy(),30))}"></label>
+    <div class="f full"><span>Participan</span><div class="seg"><label><input type="radio" name="dPart" value="nuevos"${!d||d.participantes!=="todos"?" checked":""}>Nuevos (90 días)</label><label><input type="radio" name="dPart" value="todos"${d?.participantes==="todos"?" checked":""}>Todos</label></div></div></div>
+    <div class="box"><h4>Qué da boletos</h4><div class="pick" style="max-height:none">${HITOS_DIN.map(([k,n])=>`<label><input type="checkbox" name="dh" value="${k}"${sel.has(k)?" checked":""}><span>🎟</span><span>${esc(n)}</span></label>`).join("")}</div></div>
+    <div class="row-end">${d?'<button type="button" class="btn danger" data-del-din>Eliminar</button>':""}<button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn" type="submit">${d?"Guardar":"Crear sorteo"}</button></div></form>`);
+}
+function hojaEventoForm(e){
+  hoja="eventoForm";editId=e?e.id:null;
+  abrirHoja(`<div class="shero" style="--tc:var(--warm)">${xBtn}<h2 id="pTitle" style="font-size:1.5rem;padding-right:44px">${e?"Editar evento":"Nuevo evento"}</h2></div>
+  <form id="fEvento" class="sbody"><div class="box form">
+    <label class="f full" for="eNombre">Nombre<input id="eNombre" required value="${esc(e?.nombre)}" placeholder="Ej.: Capacitación, Fuxion Connect"></label>
+    <label class="f" for="eFecha">Fecha<input id="eFecha" type="date" required value="${esc(e?e.fecha:hoy())}"></label>
+    <label class="f" for="eHora">Hora<input id="eHora" type="time" value="${esc(e?.hora||"20:00")}"></label>
+    <div class="f full"><span>Modalidad</span><div class="seg"><label><input type="radio" name="eModo" value="Zoom"${!e||e.modo!=="Presencial"?" checked":""}>Zoom</label><label><input type="radio" name="eModo" value="Presencial"${e?.modo==="Presencial"?" checked":""}>Presencial</label></div></div></div>
+    <div class="row-end">${e?'<button type="button" class="btn danger" data-del-evento>Eliminar</button>':""}<button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn" type="submit">${e?"Guardar":"Crear y convocar"}</button></div></form>`);
+}
+function hojaEvento(id){hoja="evento";editId=id;abrirHoja(`<div id="evHero"></div><div class="sbody"><div id="evConv"></div><div id="evAdd"></div></div>`);renderEvento();}
+function renderEvento(){
+  const e=eventos.find(x=>x.id===editId);if(!e){cerrar();return;}const cv=e.conv||{};const n=k=>Object.values(cv).filter(x=>x===k).length;
+  const H=$("#evHero");H.className="shero";H.style.setProperty("--tc","var(--warm)");
+  H.innerHTML=`${xBtn}<div class="shtop"><span class="cal" style="width:58px"><b>${+e.fecha.slice(8)}</b><span>${MESES[+e.fecha.slice(5,7)-1]}</span></span><div class="min"><h2 id="pTitle">${esc(e.nombre)}</h2><p class="cmeta">${diaSemana(e.fecha)}${e.hora?" · "+esc(e.hora):""} · ${esc(e.modo||"")}</p></div></div>
+    <div class="funnel"><span class="tag">${Object.keys(cv).length} convocados</span><span class="tag w">${n("confirmo")} confirmaron</span><span class="tag ok">${n("conecto")} se conectaron</span>${canWrite?'<button class="btn ghost sm" data-edit-evento>Editar</button>':""}</div>`;
+  const ord=["conecto","confirmo","invitado","no"];const ids=Object.keys(cv).map(socio).filter(Boolean).sort((a,b)=>ord.indexOf(cv[a.id])-ord.indexOf(cv[b.id]));
+  $("#evConv").innerHTML=ids.length?`<div class="box" style="padding:4px 14px">${ids.map(s=>`<div class="conv">${avatar(s,"sm")}<div class="min"><button class="plain cname" style="font-size:.95rem" data-open="${s.id}">${esc(s.nombre)}</button><span class="cmeta">${esc(s.lider)}${canWrite?` · <button class="del" data-conv-del="${s.id}">quitar</button>`:""}</span></div><div class="seg">${Object.entries(EST).map(([k,v])=>`<button data-conv="${s.id}" data-estado="${k}" aria-pressed="${cv[s.id]===k}" ${canWrite?"":"disabled"}>${v}</button>`).join("")}</div></div>`).join("")}</div>`
+    :`<div class="empty"><h3>Aún no convocas a nadie</h3><p>Agrega socios abajo y marca quién confirma.</p></div>`;
+  if(canWrite){const fuera=socios.filter(s=>!(s.id in cv)).sort((a,b)=>(diasAfil(a)??999)-(diasAfil(b)??999));const nuevos=fuera.filter(s=>(diasAfil(s)??999)<=90);
+    $("#evAdd").innerHTML=fuera.length?`<div class="box"><h4>Convocar</h4><div class="row-end" style="justify-content:flex-start;margin-bottom:10px">${nuevos.length?`<button class="btn soft sm" data-conv-add="nuevos">+ Nuevos (${nuevos.length})</button>`:""}<button class="btn ghost sm" data-conv-add="mios">+ Mis socios</button><button class="btn ghost sm" data-conv-add="todos">+ Todos (${fuera.length})</button></div>
+      <div class="pick">${fuera.map(s=>`<label><input type="checkbox" name="cv" value="${s.id}">${avatar(s,"sm")}<span class="min"><b>${esc(s.nombre)}</b> <span class="muted">· ${esc(s.lider)}</span></span></label>`).join("")}</div><div class="row-end" style="margin-top:10px"><button class="btn sm" data-conv-add="sel">Convocar seleccionados</button></div></div>`:"";}
+}
+function hojaMesaForm(m){
+  hoja="mesaForm";editId=m?m.id:null;const sel=new Set(m?m.miembros||[]:[]);const xs=socios.map(s=>({s,...compromiso(s)})).sort((a,b)=>b.p-a.p);
+  abrirHoja(`<div class="shero">${xBtn}<div style="padding-right:44px"><div class="lbl" style="margin:0">Club de lectura y crecimiento</div><h2 id="pTitle" style="font-size:1.5rem;margin-top:4px">${m?"Editar mesa":"Nueva mesa de desarrollo"}</h2></div></div>
+  <form id="fMesa" class="sbody"><div class="box form">
+    <label class="f full" for="mNombre">Nombre<input id="mNombre" required value="${esc(m?m.nombre:"Mesa de desarrollo")}"></label>
+    <label class="f full" for="mLibro">Libro actual<input id="mLibro" value="${esc(m?.libro)}" placeholder="Ej.: Los 5 niveles de liderazgo"></label>
+    <label class="f full" for="mRitmo">Cuándo se reúnen<input id="mRitmo" value="${esc(m?.ritmo||"Semanal · martes 9 pm")}"></label></div>
+    <div class="box"><h4>Miembros</h4><p class="cmeta" style="margin:-6px 0 10px">Ordenados por señales de compromiso. Empieza con 3 a 5.</p><div class="pick">${xs.map(x=>`<label><input type="checkbox" name="mm" value="${x.s.id}"${sel.has(x.s.id)?" checked":""}>${avatar(x.s,"sm")}<span class="min"><b>${esc(x.s.nombre)}</b><span class="cmeta">${esc(x.why.join(" · ")||"sin señales aún")}</span></span></label>`).join("")}</div></div>
+    <div class="row-end">${m?'<button type="button" class="btn danger" data-del-mesa>Eliminar</button>':""}<button type="button" class="btn ghost" data-close>Cancelar</button><button class="btn" type="submit">${m?"Guardar":"Crear mesa"}</button></div></form>`);
+}
+function hojaMesa(id){hoja="mesa";editId=id;abrirHoja(`<div id="mHero"></div><div class="sbody"><div data-w><form id="fSesion" class="box form" hidden></form><button class="btn block" id="sesBtn" data-ses-open>+ Registrar sesión</button></div><div id="mMiembros"></div><div id="mSes"></div></div>`);document.querySelectorAll("#sheet [data-w]").forEach(x=>x.hidden=!canWrite);renderMesa();}
+function renderMesa(){
+  const m=mesas.find(x=>x.id===editId);if(!m){cerrar();return;}const ms=(m.miembros||[]).map(socio).filter(Boolean),ses=[...(m.sesiones||[])].sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const asis=ses.length&&ms.length?Math.round(ses.reduce((a,x)=>a+(x.asistentes||[]).filter(id=>ms.some(s=>s.id===id)).length,0)/(ses.length*ms.length)*100):0;
+  $("#mHero").className="shero";
+  $("#mHero").innerHTML=`${xBtn}<div style="padding-right:44px"><div class="lbl" style="margin:0">Mesa de desarrollo</div><h2 id="pTitle" style="font-size:1.5rem;margin-top:4px">${esc(m.nombre)}</h2><p class="cmeta">📖 ${esc(m.libro||"Libro por definir")} · ${esc(m.ritmo||"")}</p></div>
+    <div class="funnel"><span class="tag">${plural(ms.length,"miembro","miembros")}</span><span class="tag">${plural(ses.length,"sesión","sesiones")}</span><span class="tag ok">${asis}% asistencia</span>${canWrite?'<button class="btn ghost sm" data-edit-mesa>Editar</button>':""}</div>`;
+  $("#mMiembros").innerHTML=ms.length?`<div class="box" style="padding:6px 14px">${ms.map(s=>{const a=ses.filter(x=>(x.asistentes||[]).includes(s.id)).length,pc=ses.length?Math.round(a/ses.length*100):0;return `<div class="cand">${avatar(s,"sm")}<button class="plain min" data-open="${s.id}"><span class="cname" style="font-size:.92rem">${esc(s.nombre)}</span><span class="cmeta">${a} de ${ses.length} sesiones</span></button><span class="tag${pc>=75?" ok":pc>=40?" w":""}">${pc}%</span></div>`}).join("")}</div>`:`<p class="muted">Sin miembros. Edita la mesa para agregarlos.</p>`;
+  $("#mSes").innerHTML=ses.length?`<div class="lbl">Sesiones</div><div class="list">${ses.map(x=>`<div class="it"><span class="cal" style="width:44px;padding:4px 0"><b style="font-size:1.05rem">${+x.fecha.slice(8)}</b><span>${MESES[+x.fecha.slice(5,7)-1]}</span></span><div class="min"><b>${esc(x.tema||"Sesión")}</b><span class="meta">${plural((x.asistentes||[]).length,"asistente","asistentes")}</span></div>${canWrite?`<button class="del" data-ses-del="${x.id}">Quitar</button>`:""}</div>`).join("")}</div>`:"";
+}
+function sortear(d){
+  const pool=socios.filter(s=>participa(s,d)).map(s=>({s,b:boletos(s,d)})).filter(x=>x.b>0);if(!pool.length)return;
+  const tot=pool.reduce((a,x)=>a+x.b,0);let r=rnd(tot),win=pool[0].s;for(const x of pool){if(r<x.b){win=x.s;break;}r-=x.b;}
+  const dr=$("#draw");dr.hidden=false;dr.className="draw";
+  dr.innerHTML=`<div class="eyebrow">Sorteo · ${esc(d.nombre)}</div><div class="name" id="drName">…</div><div style="color:var(--hero-muted)">${d.premio?`🎁 ${esc(d.premio)} · `:""}${tot} boletos en juego</div><div class="row-end" id="drActs" style="justify-content:center;visibility:hidden"><button class="btn ghost" data-draw-close>Cerrar</button><button class="btn" data-draw-save="${d.id}" data-win="${win.id}">Guardar ganador</button></div>`;
+  const names=pool.map(x=>x.s.nombre),reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;let i=0,delay=50;const steps=reduce?1:26;
+  const tick=()=>{i++;if(i>=steps){$("#drName").textContent=`🎉 ${win.nombre}`;dr.classList.add("won");$("#drActs").style.visibility="visible";return;}$("#drName").textContent=names[Math.floor(rnd(names.length))];delay*=1.12;setTimeout(tick,delay);};tick();
+}
+
+/* ================= Interacción ================= */
+function reducirFoto(file){return new Promise((res,rej)=>{const img=new Image();const u=URL.createObjectURL(file);img.onload=()=>{const S=200,c=document.createElement("canvas");c.width=c.height=S;const x=c.getContext("2d");const m=Math.min(img.width,img.height);x.drawImage(img,(img.width-m)/2,(img.height-m)/2,m,m,0,0,S,S);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.82));};img.onerror=rej;img.src=u;});}
+document.addEventListener("change",e=>{
+  if(e.target.id==="soy"){me=e.target.value;escribir("rsc-soy",me);render();toast(`Registrarás como ${me}`);}
+  if(e.target.dataset&&e.target.dataset.fecha){const s=socio(abierto);const v=e.target.value;if(!s||!v)return;const k=e.target.dataset.fecha;
+    guardar(()=>ref(s.id).update(k==="lideres5"?{lideresFecha:v}:{ruta:{[k]:v}}),`Fecha: ${fmt(v)}`);return;}
+  if(e.target.name==="nEje"){const s=socio(abierto);const eje=$("#fEje")?.dataset.ejeForm;const v=eje==="conducta"?condOf(s):nivel(s,eje);$("#eConfirmar").disabled=!s||+e.target.value===v;}
+  if(e.target.id==="fotoIn"&&e.target.files[0]){const f=e.target.files[0];e.target.value="";const s=socio(abierto);if(!s)return;reducirFoto(f).then(url=>guardar(()=>ref(s.id).update({foto:url}),"Foto guardada")).catch(()=>toast("No se pudo leer esa imagen. Prueba con otra."));}
+});
+$("#q").addEventListener("input",e=>{filtro.q=e.target.value;renderLista();});
+$("#fab").addEventListener("click",()=>{if(vista==="equipo")({reto:()=>hojaReto(null),eventos:()=>hojaEventoForm(null),sorteos:()=>hojaDin(null),mesa:()=>hojaMesaForm(null)})[eqSub]();else hojaSocioForm(null);});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){if(!$("#draw").hidden)$("#draw").hidden=true;else if(hoja)cerrar();}});
+$("#sheet").addEventListener("click",e=>{if(e.target.id==="sheet")cerrar();});
+
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+  if(d.tab){vista=d.tab;window.scrollTo({top:0});render();return;}
+  if(d.eq){eqSub=d.eq;render();return;}
+  if("close" in d){cerrar();return;}
+  if("verlider" in d){verLider=d.verlider;escribir("rsc-verlider",verLider);render();return;}
+  if(d.scroll){$("#"+d.scroll)?.scrollIntoView({behavior:"smooth"});return;}
+  if(d.goto){vista=d.goto;Object.assign(filtro,{tipo:"",cond:d.fcond??"",lider:verLider||""});window.scrollTo({top:0});render();return;}
+  if("fall" in d){Object.assign(filtro,{tipo:"",cond:"",lider:""});render();return;}
+  if("fcond" in d){filtro.cond=filtro.cond===d.fcond?"":d.fcond;render();return;}
+  if(d.ftipo){filtro.tipo=filtro.tipo===d.ftipo?"":d.ftipo;render();return;}
+  if(d.flider){filtro.lider=filtro.lider===d.flider?"":d.flider;render();return;}
+  if(d.new){({socio:()=>hojaSocioForm(null),reto:()=>hojaReto(null),din:()=>hojaDin(null),evento:()=>hojaEventoForm(null),mesa:()=>hojaMesaForm(null)})[d.new]();return;}
+  if(d.lid){const x=socio(d.lid);if(!x)return;const n=+d.n,cur=lideresN(x),v=n===cur?n-1:n;await guardar(()=>ref(x.id).update({lideres:v,lideresFecha:hoy()}),v>=5?`🎉 ${primer(x.nombre)} conoció a 5 líderes`:`${primer(x.nombre)}: ${plural(v,"líder","líderes")}`);return;}
+  if(d.open){hojaSocio(d.open);return;}
+  if(d.openEvento){hojaEvento(d.openEvento);return;}
+  if(d.openMesa){hojaMesa(d.openMesa);return;}
+  if(d.editReto){hojaReto(retos.find(r=>r.id===d.editReto));return;}
+  if(d.editDin){hojaDin(dinamicas.find(x=>x.id===d.editDin));return;}
+  if(d.sortear){const dn=dinamicas.find(x=>x.id===d.sortear);if(dn)sortear(dn);return;}
+  if("drawClose" in d){$("#draw").hidden=true;return;}
+  if(d.drawSave){const dn=dinamicas.find(x=>x.id===d.drawSave),w=socio(d.win);if(dn&&w&&await guardar(()=>col("dinamicas").doc(dn.id).update({ganadores:[...(dn.ganadores||[]),{id:w.id,nombre:w.nombre,fecha:hoy(),por:me}]}),`🏆 ${w.nombre} guardado como ganador`))$("#draw").hidden=true;return;}
+  if("delReto" in d){if(!armar(b,"¿Eliminar?"))return;if(await guardar(()=>col("retos").doc(editId).delete(),"Reto eliminado"))cerrar();return;}
+  if("delDin" in d){if(!armar(b,"¿Eliminar?"))return;if(await guardar(()=>col("dinamicas").doc(editId).delete(),"Sorteo eliminado"))cerrar();return;}
+  if("delEvento" in d){if(!armar(b,"¿Eliminar?"))return;if(await guardar(()=>col("eventos").doc(editId).delete(),"Evento eliminado"))cerrar();return;}
+  if("delMesa" in d){if(!armar(b,"¿Eliminar?"))return;if(await guardar(()=>col("mesas").doc(editId).delete(),"Mesa eliminada"))cerrar();return;}
+  if("editEvento" in d){hojaEventoForm(eventos.find(x=>x.id===editId));return;}
+  if("editMesa" in d){hojaMesaForm(mesas.find(x=>x.id===editId));return;}
+  if(d.conv&&d.estado){const ev=eventos.find(x=>x.id===editId);if(!ev)return;const s=socio(d.conv);await guardar(()=>col("eventos").doc(ev.id).update({conv:{[d.conv]:d.estado}}));
+    if(d.estado==="conecto"&&s&&!hecho(s,"evento"))await guardar(()=>ref(s.id).update({ruta:{evento:ev.fecha<=hoy()?ev.fecha:hoy()}}),`✓ Primer evento de ${primer(s.nombre)}`);return;}
+  if(d.convDel){const ev=eventos.find(x=>x.id===editId);if(!ev)return;const cv={...(ev.conv||{})};delete cv[d.convDel];const {id,...rest}=ev;await guardar(()=>col("eventos").doc(ev.id).set({...rest,conv:cv}));return;}
+  if(d.convAdd){const ev=eventos.find(x=>x.id===editId);if(!ev)return;const cv=ev.conv||{};let ids;
+    if(d.convAdd==="sel")ids=[...document.querySelectorAll("#evAdd input[name=cv]:checked")].map(x=>x.value);
+    else ids=socios.filter(s=>!(s.id in cv)&&(d.convAdd==="todos"||(d.convAdd==="mios"?s.lider===me:(diasAfil(s)??999)<=90))).map(s=>s.id);
+    if(!ids.length){toast("Elige al menos un socio");return;}const add={};ids.forEach(id=>add[id]="invitado");await guardar(()=>col("eventos").doc(ev.id).update({conv:add}),plural(ids.length,"convocado","convocados"));return;}
+  if("sesOpen" in d){const f=$("#fSesion"),m=mesas.find(x=>x.id===editId);if(!m)return;const ms=(m.miembros||[]).map(socio).filter(Boolean);
+    if(f.hidden)f.innerHTML=`<label class="f" for="sesF">Fecha<input id="sesF" type="date" value="${hoy()}"></label><label class="f" for="sesT">Tema o capítulo<input id="sesT" placeholder="Ej.: Capítulo 2"></label><div class="f full"><span>Asistieron</span><div class="pick">${ms.map(s=>`<label><input type="checkbox" name="as" value="${s.id}" checked>${avatar(s,"sm")}<span>${esc(s.nombre)}</span></label>`).join("")}</div></div><div class="full row-end"><button type="button" class="btn ghost" data-ses-open>Cancelar</button><button class="btn" type="submit">Guardar sesión</button></div>`;
+    f.hidden=!f.hidden;$("#sesBtn").hidden=!f.hidden;return;}
+  if(d.sesDel){if(!armar(b,"¿Quitar?"))return;const m=mesas.find(x=>x.id===editId);if(m)await guardar(()=>col("mesas").doc(m.id).update({sesiones:(m.sesiones||[]).filter(x=>x.id!==d.sesDel)}));return;}
+  const s=socio(abierto);if(!s)return;
+  if(d.paso){const was=!!rutaOf(s)[d.paso];const p=[...ARR,...HITOS].find(x=>x.k===d.paso);await guardar(()=>ref(s.id).update({ruta:{[d.paso]:was?null:hoy()}}),was?null:`${p.star?"🏆":"✓"} ${p.n}`);return;}
+  if(d.hab){const v=s.habilidad===d.hab?null:d.hab;await guardar(()=>ref(s.id).update({habilidad:v}),v?`Trabajando: ${HABS.find(x=>x.k===v).n}`:null);return;}
+  if(d.eje){ejeEdit=d.eje;renderEjeCambio(s,d.eje);return;}
+  if("ejeCancelar" in d){ejeEdit=null;renderSocio();return;}
+  if("foto" in d){$("#fotoIn").click();return;}
+  if("fotoDel" in d){await guardar(()=>ref(s.id).update({foto:null}),"Foto quitada");return;}
+  if("editSocio" in d){hojaSocioForm(s);return;}
+  if("delSocio" in d){if(!armar(b,"Toca otra vez para eliminar"))return;if(await guardar(()=>ref(s.id).delete(),"Socio eliminado"))cerrar();return;}
+  if(d.notaDel){if(!armar(b,"¿Borrar?"))return;await guardar(()=>ref(s.id).update({notas:(s.notas||[]).filter(n=>n.id!==d.notaDel)}));return;}
+});
+
+document.addEventListener("submit",async e=>{
+  e.preventDefault();const f=e.target;const btn=f.querySelector("[type=submit]");if(btn)btn.disabled=true;
+  try{
+    if(f.id==="fSocio"){
+      const datos={nombre:$("#sNombre").value.trim(),pais:$("#sPais").value,codigo:$("#sCodigo").value.trim(),fechaAfiliacion:$("#sFecha").value,lider:$("#sLider").value,telefono:$("#sTel").value.trim(),patrocinadorId:$("#sPatro").value||null,objetivo:$("#sObj").value.trim()};
+      if(!datos.nombre){toast("Escribe el nombre del socio.");return;}
+      const prev=editId&&socio(editId);
+      if(prev){if(await guardar(()=>ref(prev.id).update(datos),"Datos guardados"))hojaSocio(prev.id);}
+      else{const tipo=+(f.querySelector("input[name=sTipo]:checked")?.value||2),conducta=+(f.querySelector("input[name=sCond]:checked")?.value||0);const id=uid();
+        const doc={...datos,tipo,conducta,liderazgo:1,duplicacion:1,lideres:0,ruta:{},notas:[],hist:[],creadoPor:me,creado:Date.now()};
+        if(await guardar(()=>ref(id).set(doc),"Socio agregado")){socios=[...socios.filter(x=>x.id!==id),{id,...doc}];hojaSocio(id);}}
+    }
+    if(f.id==="fEje"){const s=socio(abierto);if(!s)return;const eje=f.dataset.ejeForm,isC=eje==="conducta";const v=isC?condOf(s):nivel(s,eje);
+      const nuevo=+(f.querySelector("input[name=nEje]:checked")?.value??v);if(nuevo===v)return;const motivo=$("#eMotivo").value.trim();
+      const lab=k=>isC?ESC[k].n:`${EJES[eje].pref}${k} ${EJES[eje].niv[k][0]}`;
+      const upd={[eje]:nuevo,hist:[...(s.hist||[]),{eje,de:v,a:nuevo,fecha:hoy(),por:me,...(motivo?{motivo}:{})}]};
+      if(motivo)upd.notas=[...(s.notas||[]),{id:uid(),texto:`${isC?"Escalera":EJES[eje].n}: ${lab(v)} → ${lab(nuevo)}. ${motivo}`,autor:me,fecha:hoy(),ts:Date.now()}];
+      if(await guardar(()=>ref(s.id).update(upd),`${primer(s.nombre)}: ${lab(nuevo)}`)){ejeEdit=null;renderSocio();}}
+    if(f.id==="fNota"){const s=socio(abierto);if(!s)return;const t=$("#nTexto").value.trim();if(!t)return;
+      if(await guardar(()=>ref(s.id).update({notas:[...(s.notas||[]),{id:uid(),texto:t,autor:me,fecha:hoy(),ts:Date.now()}]}),"Nota guardada"))$("#nTexto").value="";}
+    if(f.id==="fReto"){const r={nombre:$("#rNombre").value.trim()||"Reto",inicio:$("#rInicio").value||hoy(),dias:Math.max(1,+$("#rDias").value||14),meta:Math.min(5,Math.max(1,+$("#rMeta").value||5)),socios:[...f.querySelectorAll("input[name=rs]:checked")].map(x=>x.value)};
+      if(!r.socios.length){toast("Elige al menos un socio.");return;}const id=editId||uid();
+      if(await guardar(()=>editId?col("retos").doc(id).update(r):col("retos").doc(id).set({...r,creadoPor:me,creado:Date.now()}),editId?"Reto actualizado":"¡Reto iniciado!")){cerrar();vista="equipo";eqSub="reto";render();}}
+    if(f.id==="fDin"){const dn={nombre:$("#dNombre").value.trim()||"Sorteo",premio:$("#dPremio").value.trim(),inicio:$("#dInicio").value||hoy(),fin:$("#dFin").value||addDias(hoy(),30),participantes:f.querySelector("input[name=dPart]:checked").value,hitos:[...f.querySelectorAll("input[name=dh]:checked")].map(x=>x.value)};
+      if(dn.fin<dn.inicio){toast("La fecha final debe ser después del inicio.");return;}if(!dn.hitos.length){toast("Elige al menos un logro que dé boletos.");return;}const id=editId||uid();
+      if(await guardar(()=>editId?col("dinamicas").doc(id).update(dn):col("dinamicas").doc(id).set({...dn,ganadores:[],creadoPor:me,creado:Date.now()}),editId?"Sorteo actualizado":"¡Sorteo creado!")){cerrar();vista="equipo";eqSub="sorteos";render();}}
+    if(f.id==="fEvento"){const ev={nombre:$("#eNombre").value.trim(),fecha:$("#eFecha").value,hora:$("#eHora").value,modo:f.querySelector("input[name=eModo]:checked").value};
+      if(!ev.nombre||!ev.fecha){toast("Falta nombre o fecha.");return;}const id=editId||uid();
+      if(await guardar(()=>editId?col("eventos").doc(id).update(ev):col("eventos").doc(id).set({...ev,conv:{},creadoPor:me,creado:Date.now()}),editId?"Evento actualizado":"Evento creado")){vista="equipo";eqSub="eventos";render();hojaEvento(id);}}
+    if(f.id==="fMesa"){const m={nombre:$("#mNombre").value.trim()||"Mesa de desarrollo",libro:$("#mLibro").value.trim(),ritmo:$("#mRitmo").value.trim(),miembros:[...f.querySelectorAll("input[name=mm]:checked")].map(x=>x.value)};const id=editId||uid();
+      if(await guardar(()=>editId?col("mesas").doc(id).update(m):col("mesas").doc(id).set({...m,sesiones:[],creadoPor:me,creado:Date.now()}),editId?"Mesa actualizada":"Mesa creada")){vista="equipo";eqSub="mesa";render();hojaMesa(id);}}
+    if(f.id==="fSesion"){const m=mesas.find(x=>x.id===editId);if(!m)return;const x={id:uid(),fecha:$("#sesF").value||hoy(),tema:$("#sesT").value.trim(),asistentes:[...f.querySelectorAll("input[name=as]:checked")].map(i=>i.value)};
+      if(await guardar(()=>col("mesas").doc(m.id).update({sesiones:[...(m.sesiones||[]),x]}),"Sesión registrada")){f.hidden=true;$("#sesBtn").hidden=false;}}
+  }finally{if(btn&&document.body.contains(btn)){if(f.id==="fEje"){const s=socio(abierto);const eje=f.dataset.ejeForm;const v=f.querySelector("input[name=nEje]:checked")?.value;btn.disabled=!s||+v===(eje==="conducta"?condOf(s):nivel(s,eje));}else btn.disabled=false;}}
+});
+
+/* ================= Datos (Supabase) ================= */
+const cfg=window.APP_CONFIG||{};
+const TABLAS=["socios","retos","dinamicas","eventos","mesas"];
+let sb=null,sesion=null;const cache={},subs={};
+const esObj=v=>v&&typeof v==="object"&&!Array.isArray(v);
+function fusion(a,b){const o={...(esObj(a)?a:{})};for(const k in b){o[k]=esObj(b[k])&&esObj(o[k])?fusion(o[k],b[k]):b[k];}return o;}
+const snapDe=t=>({docs:[...(cache[t]||new Map()).entries()].map(([id,d])=>({id,data:()=>d}))});
+function emitir(t){(subs[t]||[]).forEach(fn=>fn(snapDe(t)));}
+function errDe(e){const m=((e&&e.message)||"")+" "+((e&&e.code)||"");return{code:/row-level security|permission|42501|JWT|401|403/i.test(m)?"invalid_argument":"unavailable",message:m};}
+const ahora=()=>new Date().toISOString();
+function docRef(t,id){return{
+  async set(data){const prev=cache[t].get(id);cache[t].set(id,data);emitir(t);
+    const {error}=await sb.from(t).upsert({id,data,updated_at:ahora()});
+    if(error){prev===undefined?cache[t].delete(id):cache[t].set(id,prev);emitir(t);throw errDe(error);}},
+  async update(patch){const prev=cache[t].get(id);if(prev===undefined)throw{code:"invalid_argument"};const next=fusion(prev,patch);cache[t].set(id,next);emitir(t);
+    const {error}=await sb.from(t).update({data:next,updated_at:ahora()}).eq("id",id);
+    if(error){cache[t].set(id,prev);emitir(t);throw errDe(error);}},
+  async delete(){const prev=cache[t].get(id);cache[t].delete(id);emitir(t);
+    const {error}=await sb.from(t).delete().eq("id",id);
+    if(error){if(prev!==undefined)cache[t].set(id,prev);emitir(t);throw errDe(error);}}};}
+async function cargarTabla(t){const {data,error}=await sb.from(t).select("id,data");if(error)throw error;cache[t]=new Map(data.map(r=>[r.id,r.data||{}]));emitir(t);}
+async function iniciarDatos(){
+  TABLAS.forEach(t=>cache[t]=cache[t]||new Map());
+  db={collection:t=>({doc:id=>docRef(t,id),onSnapshot(next){(subs[t]=subs[t]||[]).push(next);return()=>{};}})};
+  const sub=(name,set)=>col(name).onSnapshot(snap=>{set(snap.docs.map(d=>({id:d.id,...d.data()})));render();});
+  sub("socios",x=>{socios=x;});sub("retos",x=>retos=x);sub("dinamicas",x=>dinamicas=x);sub("eventos",x=>eventos=x);sub("mesas",x=>mesas=x);
+  try{await Promise.all(TABLAS.map(cargarTabla));cargado=true;render();}
+  catch(e){cargado=true;banner("No se pudieron cargar los datos. Revisa tu conexión y recarga la página.");render();return;}
+  sb.channel("cambios").on("postgres_changes",{event:"*",schema:"public"},p=>{const t=p.table;if(!cache[t])return;
+    if(p.eventType==="DELETE"){if(p.old&&p.old.id)cache[t].delete(p.old.id);}else if(p.new&&p.new.id)cache[t].set(p.new.id,p.new.data||{});emitir(t);}).subscribe();
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden)TABLAS.forEach(t=>cargarTabla(t).catch(()=>{}));});
+}
+function arrancar(){
+  document.body.classList.remove("nologin");
+  if(!window.supabase||!cfg.SUPABASE_URL||/TU-PROYECTO/.test(cfg.SUPABASE_URL)){cargado=true;canWrite=false;render();banner("Falta configurar config.js con la URL y la clave de tu proyecto de Supabase.");return;}
+  sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY,{auth:{persistSession:false}});
+  render();iniciarDatos();
+}
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+arrancar();
+</script>
+</body>
+</html>
