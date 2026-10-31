@@ -324,6 +324,21 @@ body.nologin #top,body.nologin main,body.nologin .nav{display:none}
 .login input{background:var(--hero-tile);border-color:var(--hero-line);color:var(--hero-ink)}
 .login .btn{background:var(--hero-ink);color:var(--hero);padding:13px 16px;margin-top:6px}
 .login .msg{min-height:1.2em;color:#FFC9A8;font-size:.88rem;font-weight:600}
+/* Nuevos socios desde offix */
+.nvban{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--accent-soft);color:var(--fg);border:1.5px solid var(--accent);border-radius:16px;padding:12px 14px;margin:4px 0 14px;font:inherit;cursor:pointer}
+.nvban b{display:block;font-size:.98rem}.nvban small{color:var(--muted);font-size:.8rem}
+.nvb-n{background:var(--accent);color:var(--accent-ink);border-radius:12px;min-width:38px;height:38px;display:grid;place-items:center;font-weight:800;font-size:1.1rem}
+.nvcard{display:flex;flex-direction:column;gap:9px;margin-bottom:12px}
+.nvhead{display:flex;align-items:center;gap:10px}.nvhead b{display:block}.nvhead small{color:var(--muted);font-size:.78rem}
+.nvini{background:var(--fg);color:var(--surface);border-radius:7px;padding:2px 7px;font-weight:800;font-size:.8rem}
+.nvgen{margin-left:auto;border:0;cursor:pointer}
+.nvkpis{display:flex;flex-wrap:wrap;gap:6px}.nvkpis .tag.w{background:#FDECEC;color:#B42318}
+.nvficha{width:100%;border-radius:12px;border:1px solid var(--line);background:#fff}
+.nvform{display:flex;flex-wrap:wrap;gap:8px}
+.nvacc{display:flex;flex-wrap:wrap;gap:7px}.nvacc .btn[disabled]{opacity:.45}
+.nvfin{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:9px}
+.nvdesc{background:none;border:0;color:var(--muted);font-size:.8rem;text-decoration:underline;cursor:pointer}
+.nvadd{background:transparent;color:var(--fg);border:1.5px solid var(--muted)}
 </style>
 </head>
 <body class="nologin">
@@ -494,6 +509,132 @@ async function guardar(fn,ok){
 const col=n=>db.collection(n);
 const ref=id=>col("socios").doc(id);
 
+/* ================= Nuevos socios (desde offix) =================
+   El script de la PC (7:00 y 19:00) deja en la tabla socios_nuevos a los socios
+   afiliados en las 8 oficinas, con la captura "Mi estado". Aquí se atienden:
+   caso para pedir número → chat → ficha → bienvenida → contacto → Agregar a Socios Clave.
+   Módulo aparte: no modifica la lógica existente de la app. */
+let nuevos=[],nvCargado=false;
+const NV_PREF={PE:"51",AR:"54",CO:"57",EC:"593",MX:"52",CL:"56",BO:"591",UY:"598",PY:"595",VE:"58",CR:"506",PA:"507",GT:"502",HN:"504",BR:"55",US:"1",PR:"1",DO:"1",ES:"34",FR:"33",IT:"39",PT:"351",DE:"49",AT:"43",BE:"32",NL:"31",LU:"352",IE:"353",GR:"30",CY:"357",MT:"356",HR:"385",SI:"386",SK:"421",EE:"372",LV:"371",LT:"370",FI:"358"};
+const NV_FEM=/(a|ah|ys|iz|is|el|en|ine|ith|ét|elle|ry|beth)$/i;
+const NV_MASC_EXC=/^(luca|josua|joshua|nicola|garcia|elias|matias|tomas|jonas|lucas|andres)$/i;
+function nvTitle(s){return String(s||"").replace(/\s+/g," ").trim().toLowerCase().replace(/(^|\s)(\S)/g,(m,a,b)=>a+b.toUpperCase());}
+function nvGenero(n){if(n.genero)return n.genero;const p=primer(nvTitle(n.nombre));if(!p)return"socio";if(/^(maria|ana|rosa|luz|carmen|ruth|sol|liz|beth|ines|isabel|raquel|mercedes|dolores|pilar|soledad|nancy|evelyn|jenny|katherine|karen|sandy|yaneth|lisbeth|miriam)/i.test(p))return"socia";if(/^(jose|juan|luis|carlos|jorge|miguel|pedro|pablo|david|daniel|angel|manuel|jesus|cesar|oscar|victor|hector|ruben|joel|abel|noel|samuel|gabriel|ismael|rafael|israel|emanuel|axel|nicolas|tomas|andres|matias|elias|jonas|lucas)/i.test(p))return"socio";return NV_FEM.test(p)&&!NV_MASC_EXC.test(p)?"socia":"socio";}
+function nvWa(n){const d=String(n.telefono||"").replace(/\D/g,"");const pr=NV_PREF[n.pais]||"";if(!d)return"";if(pr&&d.startsWith(pr)&&d.length>pr.length+6){return n.pais==="AR"&&!d.startsWith("549")?"549"+d.slice(2):d;}const loc=d.replace(/^0+/,"");return n.pais==="AR"?"549"+loc.replace(/^9/,""):pr+loc;}
+function nvExiste(n){const c=String(n.codigo||"").replace(/\D/g,"");return c?socios.find(s=>String(s.codigo||"").replace(/\D/g,"")===c)||null:null;}
+const nvPend=()=>nuevos.filter(n=>(n.estado||"pendiente")==="pendiente");
+
+function nvBienvenida(n){
+  const g=nvGenero(n),p=primer(nvTitle(n.nombre)),vos=n.pais==="AR",bv=g==="socia"?"Bienvenida":"Bienvenido";
+  return vos
+  ?`${bv} a Fuxion, ${p}!\n\nQuiero que sepas que contás conmigo y con todo el equipo para apoyarte en cada paso de este camino. Estamos súper emocionados por lo que viene para vos.\n\n¿Qué te parece si coordinamos una reunión hoy o mañana?\nAsí te doy *la inducción al negocio*, los primeros alcances y estrategias para que empieces a rentabilizar rápido y generar ganancias desde ya.\n\nAdemás, si podés *enviarme una foto tuya*, te preparamos un flyer de bienvenida para que el equipo te conozca y sepa que ya formás parte de esta gran familia Fuxion.\n\n¡Vamos con todo, ${p}!\n\n¿Cuándo nos reunimos?\n📲💼🚀`
+  :`${bv} a Fuxion, ${p}!\n\nQuiero que sepas que cuentas conmigo y con todo el equipo para apoyarte en cada paso de este camino. Estamos súper emocionados por lo que viene para ti.\n\n¿Qué te parece si coordinamos una reunión hoy o mañana?\nAsí te doy *la inducción al negocio*, los primeros alcances y estrategias para que empieces a rentabilizar rápido y generar ganancias desde ya.\n\nAdemás, si puedes *enviarme una foto tuya*, te preparamos un flyer de bienvenida para que el equipo te conozca y sepa que ya formas parte de esta gran familia Fuxion.\n\n¡Vamos con todo, ${p}!\n\n¿Cuándo nos reunimos?\n📲💼🚀`;
+}
+function nvCaso(lista){return "SOLICITO NUMERO DE CONTACTO Y NACIONALIDAD DE:\n\n"+lista.map((n,i)=>`${i+1}. ${n.codigo} // ${String(n.nombre||"").replace(/\s+/g," ").trim().toUpperCase()}`).join("\n");}
+function nvVcard(n){const g=nvGenero(n),S=g==="socia"?"Socia":"Socio",pi=pais(n.pais),nom=[nvTitle(n.nombre),pi&&pi[0]?flag(pi[0]):""].filter(Boolean).join(" "),ape=`${S} Fxn ${n.ini||""}`.trim(),org=`${S} ${pi?pi[1]:""} Fuxion Cp Fxn`.replace(/\s+/g," ");
+  return ["BEGIN:VCARD","VERSION:3.0",`N:${ape};${nom};;;`,`FN:${nom} ${ape}`,`ORG:${org}`,`TEL;TYPE=CELL:+${nvWa(n)}`,`NOTE:Código ${n.codigo} - Afiliación ${n.semana_afiliacion||""} - Oficina ${n.oficina||""}`,"END:VCARD"].join("\r\n")+"\r\n";}
+async function nvCopiar(t){try{await navigator.clipboard.writeText(t);return true}catch(e){}try{const a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();const ok=document.execCommand("copy");a.remove();return ok}catch(e){return false}}
+function nvImagen(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
+async function nvFichaBlob(n){
+  const img=await nvImagen(n.ficha);const W=Math.max(img.width,600),pad=24,th=58;
+  const c=document.createElement("canvas");c.width=W;c.height=img.height+th+pad;const x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#1d2b22";x.font="600 26px Arial, sans-serif";
+  x.fillText(`${String(n.nombre||"").toUpperCase()} - ID: ${n.codigo}`.slice(0,60),pad,40);x.drawImage(img,(W-img.width)/2,th);
+  return await new Promise(r=>c.toBlob(r,"image/png"));
+}
+async function cargarNuevos(){
+  if(!sb)return;try{const {data,error}=await sb.from("socios_nuevos").select("*").order("created_at",{ascending:false});if(error)throw error;nuevos=data||[];}catch(e){nuevos=[];}
+  nvCargado=true;if(vista==="inicio")renderInicio();if(hoja==="nuevos")renderNuevos();
+}
+async function nvActualizar(codigo,cambios){
+  const i=nuevos.findIndex(n=>n.codigo===codigo);if(i<0)return false;const prev=nuevos[i];nuevos[i]={...prev,...cambios};
+  const {error}=await sb.from("socios_nuevos").update({...cambios,updated_at:new Date().toISOString()}).eq("codigo",codigo);
+  if(error){nuevos[i]=prev;toast("No se guardó. Revisa tu conexión.");return false;}return true;
+}
+function bannerNuevos(){
+  const p=nvPend();if(!p.length)return"";
+  return `<button class="nvban" data-nv-abrir><span class="nvb-n">${p.length}</span><span class="min"><b>${p.length===1?"Nuevo socio por atender":"Nuevos socios por atender"}</b><small>${p.slice(0,3).map(n=>esc(primer(nvTitle(n.nombre)))).join(", ")}${p.length>3?"…":""} · desde tus oficinas</small></span><span aria-hidden="true">›</span></button>`;
+}
+let nvTab="pendiente";
+function hojaNuevos(){hoja="nuevos";abrirHoja(`<div class="shero">${xBtn}<h2 id="pTitle" style="font-size:1.5rem;padding-right:44px">🆕 Nuevos socios</h2><p class="cmeta">Afiliados en tus oficinas · se actualiza a las 7:00 y 19:00</p></div><div class="sbody" id="nvBody"></div>`);renderNuevos();}
+function renderNuevos(){
+  const el=$("#nvBody");if(!el)return;
+  const lista=nuevos.filter(n=>(n.estado||"pendiente")===nvTab);
+  const sinTel=nvPend().filter(n=>!n.telefono);const porOf={};sinTel.forEach(n=>{(porOf[n.oficina]=porOf[n.oficina]||[]).push(n)});
+  let h=`<div class="chips" style="padding:0 0 4px">${[["pendiente","Por atender"],["agregado","Agregados"],["descartado","Descartados"]].map(([k,t])=>`<button class="chip" data-nv-tab="${k}" aria-pressed="${nvTab===k}">${t} <span class="mono" style="opacity:.7">${nuevos.filter(n=>(n.estado||"pendiente")===k).length}</span></button>`).join("")}</div>`;
+  if(nvTab==="pendiente"&&Object.keys(porOf).length){
+    h+=`<div class="box"><h4>📋 Pedir números a soporte</h4><p class="cmeta" style="margin:-4px 0 10px">El caso lo registra el patrocinador: entra a esa oficina → Ayuda → Registra tu caso → Solicitudes → Emprendedor Fuxion → Modificar datos.</p><div style="display:flex;flex-wrap:wrap;gap:8px">${Object.entries(porOf).map(([of,ls])=>`<button class="btn sm ghost" data-nv-caso="${esc(of)}">Copiar caso · ${esc(ls[0].ini||of)} (${esc(of)}) · ${ls.length}</button>`).join("")}</div></div>`;
+  }
+  if(!lista.length)h+=`<div class="empty"><h3>${nvTab==="pendiente"?"🎉 Nadie pendiente":"Sin registros"}</h3><p>${nvTab==="pendiente"?"Cuando alguien se afilie en tus oficinas aparecerá aquí.":""}</p></div>`;
+  h+=lista.map(nvTarjeta).join("");
+  el.innerHTML=h;
+}
+function nvTarjeta(n){
+  const g=nvGenero(n),ex=nvExiste(n),wa=nvWa(n),pend=(n.estado||"pendiente")==="pendiente",me_=n.mi_estado||{};
+  const k=esc(n.codigo);
+  return `<div class="box nvcard" data-nv="${k}">
+    <div class="nvhead"><span class="nvini">${esc(n.ini||"—")}</span><div class="min"><b>${esc(nvTitle(n.nombre))}</b><small>${esc(n.codigo)} · ${esc(n.oficina||"")} · afiliación ${esc(n.semana_afiliacion||"")}</small></div>
+      ${pend?`<button class="tag nvgen" data-nv-gen="${k}" title="Cambiar">${g==="socia"?"Socia":"Socio"} ⇄</button>`:""}</div>
+    <div class="nvkpis"><span class="tag ${me_.activo?"":"w"}">${me_.activo?"Activo ✓":"Inactivo"}</span><span class="tag">${esc(me_.rango_actual||n.rango||"—")}</span><span class="tag">QV ${esc(me_.qv_total??n.pv_semana??0)} PV4</span>${ex?`<span class="tag" style="background:var(--accent-soft);color:var(--accent)">Ya está en Socios Clave</span>`:""}</div>
+    ${n.ficha?`<img class="nvficha" src="${n.ficha}" alt="Mi estado de ${esc(nvTitle(n.nombre))}">`:""}
+    ${pend?`<div class="form nvform">
+      <label class="f" style="flex:1 1 140px">País<select data-nv-pais="${k}"><option value="">—</option>${optsPais(n.pais||"").replace(/ selected/g,"").replace(`value="${n.pais}"`,`value="${n.pais}" selected`)}</select></label>
+      <label class="f" style="flex:2 1 160px">Celular (de soporte)<input data-nv-tel="${k}" type="tel" inputmode="tel" value="${esc(n.telefono||"")}" placeholder="Pega el número"></label></div>
+    <div class="nvacc">
+      <button class="btn sm" data-nv-chat="${k}" ${wa&&n.pais?"":"disabled"} style="background:#25D366;color:#fff">① Abrir chat</button>
+      <button class="btn sm ghost" data-nv-ficha="${k}" ${n.ficha?"":"disabled"}>② Compartir ficha</button>
+      <button class="btn sm ghost" data-nv-bienv="${k}">③ Copiar bienvenida</button>
+      <button class="btn sm ghost" data-nv-vcf="${k}" ${wa&&n.pais?"":"disabled"}>④ Guardar contacto</button>
+    </div>
+    <div class="nvfin"><button class="nvdesc" data-nv-desc="${k}">Descartar</button><button class="btn sm nvadd" data-nv-add="${k}">${ex?"☐ Marcar como ya agregado":"☐ Agregar a Socios Clave"}</button></div>`
+    :`<p class="cmeta" style="margin-top:8px">${n.estado==="agregado"?"✅ Agregado a Socios Clave":"Descartado"}${n.atendido_at?" · "+fmt(String(n.atendido_at).slice(0,10)):""}</p>${n.estado==="descartado"?`<button class="btn sm ghost" data-nv-reabrir="${k}" style="margin-top:6px">Volver a pendientes</button>`:""}`}
+  </div>`;
+}
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("[data-nv-abrir],[data-nv-tab],[data-nv-caso],[data-nv-gen],[data-nv-chat],[data-nv-ficha],[data-nv-bienv],[data-nv-vcf],[data-nv-add],[data-nv-desc],[data-nv-reabrir]");if(!b)return;
+  e.stopPropagation();const d=b.dataset;const n=nuevos.find(x=>x.codigo===(d.nvGen||d.nvChat||d.nvFicha||d.nvBienv||d.nvVcf||d.nvAdd||d.nvDesc||d.nvReabrir));
+  if("nvAbrir" in d){hojaNuevos();return;}
+  if(d.nvTab){nvTab=d.nvTab;renderNuevos();return;}
+  if(d.nvCaso){const ls=nvPend().filter(x=>!x.telefono&&x.oficina===d.nvCaso);toast(await nvCopiar(nvCaso(ls))?`Caso copiado (${ls.length}). Pégalo en Registra tu caso`:"No se pudo copiar");return;}
+  if(!n)return;
+  if(d.nvGen){await nvActualizar(n.codigo,{genero:nvGenero(n)==="socia"?"socio":"socia"});renderNuevos();return;}
+  if(d.nvChat){const hr=new Date().getHours(),sal=hr<12?"Buenos días":hr<19?"Buenas tardes":"Buenas noches";window.open(`https://wa.me/${nvWa(n)}?text=${encodeURIComponent(`${sal} ${primer(nvTitle(n.nombre))}!`)}`,"_blank");return;}
+  if(d.nvFicha){try{const blob=await nvFichaBlob(n);const f=new File([blob],`socio_${n.codigo}.png`,{type:"image/png"});
+      if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f]});
+      else{try{await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);toast("Ficha copiada. Pégala en el chat");}catch(_){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=f.name;a.click();toast("Ficha descargada");}}}
+    catch(err){if(err&&err.name!=="AbortError")toast("No se pudo generar la ficha");}return;}
+  if(d.nvBienv){toast(await nvCopiar(nvBienvenida(n))?"Bienvenida copiada. Pégala en el chat":"No se pudo copiar");return;}
+  if(d.nvVcf){const v=nvVcard(n),movil=/iphone|ipad|ipod|android/i.test(navigator.userAgent);
+    if(movil){const by=new TextEncoder().encode(v);let s="";by.forEach(c=>s+=String.fromCharCode(c));location.href=`/api/vcard?d=${btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}`;}
+    else{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([v],{type:"text/vcard"}));a.download=`${nvTitle(n.nombre)}.vcf`;a.click();}return;}
+  if(d.nvDesc){if(!armar(b,"¿Descartar? Toca otra vez"))return;await nvActualizar(n.codigo,{estado:"descartado",atendido_at:new Date().toISOString()});renderNuevos();if(vista==="inicio")renderInicio();toast("Descartado");return;}
+  if(d.nvReabrir){await nvActualizar(n.codigo,{estado:"pendiente",atendido_at:null});renderNuevos();if(vista==="inicio")renderInicio();return;}
+  if(d.nvAdd){
+    if(!canWrite){toast("Esta vista no puede guardar datos.");return;}
+    const ex=nvExiste(n);
+    if(ex){if(!confirm(`${ex.nombre} ya está en Socios Clave.\n\nSolo se marcará como agregado, sin crear otro.`))return;
+      if(await nvActualizar(n.codigo,{estado:"agregado",atendido_at:new Date().toISOString(),socio_id:ex.id})){renderNuevos();if(vista==="inicio")renderInicio();toast("Marcado como agregado ✓");}return;}
+    if(!n.pais&&!confirm("No elegiste país. ¿Agregar igual? (puedes editarlo luego)"))return;
+    if(!confirm(`Se agregará a ${nvTitle(n.nombre)} a Socios Clave (líder ${me}), en Arranque.`))return;
+    const id=uid(),fecha=nvFechaAfil(n);
+    const doc={nombre:nvTitle(n.nombre),pais:n.pais||"",codigo:String(n.codigo),fechaAfiliacion:fecha,lider:me,telefono:n.telefono?("+"+nvWa(n)):"",patrocinadorId:null,objetivo:"",
+      tipo:2,conducta:0,liderazgo:1,duplicacion:1,lideres:0,ruta:{},hist:[],genero:nvGenero(n),oficina:n.oficina||"",
+      notas:[{id:uid(),texto:`Afiliado en ${n.oficina||"offix"} (${n.ini||""}) · semana ${n.semana_afiliacion||""} · ${n.mi_estado?.activo?"Activo":"Inactivo"} · ${n.mi_estado?.qv_total??n.pv_semana??0} PV4. Agregado automático desde offix.`,autor:me,fecha:hoy(),ts:Date.now()}],
+      creadoPor:me,creado:Date.now()};
+    if(await guardar(()=>ref(id).set(doc),"Socio agregado a Socios Clave ✓")){
+      socios=[...socios.filter(x=>x.id!==id),{id,...doc}];
+      await nvActualizar(n.codigo,{estado:"agregado",atendido_at:new Date().toISOString(),socio_id:id});renderNuevos();if(vista==="inicio")renderInicio();}
+    return;}
+},true);
+document.addEventListener("change",async e=>{
+  const t=e.target;if(t.dataset.nvTel!==undefined){await nvActualizar(t.dataset.nvTel,{telefono:t.value.trim()});renderNuevos();}
+  if(t.dataset.nvPais!==undefined){await nvActualizar(t.dataset.nvPais,{pais:t.value});renderNuevos();}
+});
+// Semana Fuxion "43 - 2026" → miércoles de esa semana (la semana 1 de 2026 empieza el miércoles 7 de enero)
+function nvFechaAfil(n){const m=String(n.semana_afiliacion||"").match(/(\d+)\s*-\s*(\d{4})/);if(!m||m[2]!=="2026")return hoy();const d=addDias("2026-01-07",(+m[1]-1)*7);return d>hoy()?hoy():d;}
+
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)cargarNuevos();});
+
 /* ================= Render ================= */
 function render(){
   document.querySelectorAll(".nb").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===vista)));
@@ -526,7 +667,7 @@ function renderInicio(){
   const el=$("#vInicio");
   if(!cargado&&db){el.innerHTML=`<div class="empty"><h3>Cargando…</h3></div>`;return;}
   if(!socios.length){el.innerHTML=`<div class="empty"><h3>Agrega a tus socios</h3><p>Nuevos y también los de tiempo con los que sigues en contacto. Con dos o tres toques por socio verás en qué escalón está cada uno y qué enseñarle.</p>${canWrite?'<button class="btn" data-new="socio">Agregar socio</button>':""}</div>`;return;}
-  const xs=verSocios();let h="";
+  const xs=verSocios();let h=bannerNuevos();
   const cnt=ESC.map((_,i)=>xs.filter(s=>condOf(s)===i).length);const max=Math.max(1,...cnt);
   h+=`<div class="sech"><h2>Escalera de conductas</h2><span class="r">${verLider?esc(verLider):"Todo el equipo"}</span></div><div class="box"><div class="ladder">${ESC.map((e,i)=>`<button class="lrow c${i}" data-goto="socios" data-fcond="${i}"><span class="nm"><i></i>${e.n}</span><span class="bar"><i style="width:${cnt[i]/max*100}%"></i></span><span class="v">${cnt[i]}</span></button>`).join("")}</div>
     <p class="cmeta" style="margin-top:10px">Vender, afiliar, fidelizar, liderar y liderar líderes: las 5 conductas clave. Toca un escalón para ver quiénes están ahí.</p></div>`;
@@ -947,7 +1088,7 @@ function arrancar(){
   document.body.classList.remove("nologin");
   if(!window.supabase||!cfg.SUPABASE_URL||/TU-PROYECTO/.test(cfg.SUPABASE_URL)){cargado=true;canWrite=false;render();banner("Falta configurar config.js con la URL y la clave de tu proyecto de Supabase.");return;}
   sb=window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY,{auth:{persistSession:false}});
-  render();iniciarDatos();
+  render();iniciarDatos();cargarNuevos();
 }
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 arrancar();
