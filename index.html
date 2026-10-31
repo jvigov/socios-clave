@@ -333,7 +333,11 @@ body.nologin #top,body.nologin main,body.nologin .nav{display:none}
 .nvini{background:var(--fg);color:var(--surface);border-radius:7px;padding:2px 7px;font-weight:800;font-size:.8rem}
 .nvgen{margin-left:auto;border:0;cursor:pointer}
 .nvkpis{display:flex;flex-wrap:wrap;gap:6px}.nvkpis .tag.w{background:#FDECEC;color:#B42318}
-.nvficha{width:100%;border-radius:12px;border:1px solid var(--line);background:#fff}
+.nvf{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;color:#1d2b22;font-family:Arial,sans-serif}
+.nvf-t{font-weight:700;font-size:.82rem;padding:9px 12px}
+.nvf-h{background:#1F4E8C;color:#fff;padding:9px 12px}.nvf-h b{display:block;font-size:1rem}.nvf-h span{font-size:.75rem;opacity:.9}
+.nvf-r{display:flex;justify-content:space-between;gap:10px;padding:6px 12px;font-size:.82rem}.nvf-r:nth-child(even){background:#F4F7FB}
+.nvf-r span{color:#5b6b78}.nvf-r b.ok{color:#2E7D32}.nvf-r b.no{color:#B42318}
 .nvform{display:flex;flex-wrap:wrap;gap:8px}
 .nvacc{display:flex;flex-wrap:wrap;gap:7px}.nvacc .btn[disabled]{opacity:.45}
 .nvfin{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:9px}
@@ -535,11 +539,24 @@ function nvVcard(n){const g=nvGenero(n),S=g==="socia"?"Socia":"Socio",pi=pais(n.
   return ["BEGIN:VCARD","VERSION:3.0",`N:${ape};${nom};;;`,`FN:${nom} ${ape}`,`ORG:${org}`,`TEL;TYPE=CELL:+${nvWa(n)}`,`NOTE:Código ${n.codigo} - Afiliación ${n.semana_afiliacion||""} - Oficina ${n.oficina||""}`,"END:VCARD"].join("\r\n")+"\r\n";}
 async function nvCopiar(t){try{await navigator.clipboard.writeText(t);return true}catch(e){}try{const a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();const ok=document.execCommand("copy");a.remove();return ok}catch(e){return false}}
 function nvImagen(src){return new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src;});}
+// Ficha propia del socio (datos de "Mi estado" en offix), sin capturas de pantalla
+function nvFilas(n){const m=n.mi_estado||{},v=x=>x===null||x===undefined||x===""?"—":String(x);
+  return [["Activo",m.activo===undefined?v(n.estado_offix):(m.activo?"✓ Sí":"✗ No")],["Rango más alto",v(m.rango_mas_alto)],["Rango actual",v(m.rango_actual||n.rango)],
+    ["Semana actual",v(m.semana)],["Semana de afiliación",v(n.semana_afiliacion)],["QV personal (PV4)",v(m.qv_personal)],["QV clientes (PV4)",v(m.qv_clientes)],
+    ["QV total (PV4)",v(m.qv_total??n.pv_semana)],["Descuento compra hoy",v(m.descuento)]];}
+function nvFichaHtml(n){return `<div class="nvf"><div class="nvf-t">${esc(String(n.nombre||"").toUpperCase())} - ID: ${esc(n.codigo)}</div>
+  <div class="nvf-h"><b>Mi estado</b><span>resumen de mi actividad semanal Fuxion</span></div>
+  <div class="nvf-b">${nvFilas(n).map(([k,v])=>`<div class="nvf-r"><span>${k}</span><b class="${v.startsWith("✓")?"ok":v.startsWith("✗")?"no":""}">${esc(v)}</b></div>`).join("")}</div></div>`;}
 async function nvFichaBlob(n){
-  const img=await nvImagen(n.ficha);const W=Math.max(img.width,600),pad=24,th=58;
-  const c=document.createElement("canvas");c.width=W;c.height=img.height+th+pad;const x=c.getContext("2d");
-  x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.fillStyle="#1d2b22";x.font="600 26px Arial, sans-serif";
-  x.fillText(`${String(n.nombre||"").toUpperCase()} - ID: ${n.codigo}`.slice(0,60),pad,40);x.drawImage(img,(W-img.width)/2,th);
+  const S=2,W=360,pad=18,filas=nvFilas(n),rowH=30,titH=40,headH=58,H=titH+headH+filas.length*rowH+pad;
+  const c=document.createElement("canvas");c.width=W*S;c.height=H*S;const x=c.getContext("2d");x.scale(S,S);
+  x.fillStyle="#fff";x.fillRect(0,0,W,H);
+  x.fillStyle="#1d2b22";x.font="700 13px Arial, sans-serif";x.fillText(`${String(n.nombre||"").toUpperCase()} - ID: ${n.codigo}`.slice(0,48),pad,26);
+  x.fillStyle="#1F4E8C";x.fillRect(0,titH,W,headH);x.fillStyle="#fff";x.font="700 17px Arial, sans-serif";x.fillText("Mi estado",pad,titH+26);
+  x.font="12px Arial, sans-serif";x.fillText("resumen de mi actividad semanal Fuxion",pad,titH+45);
+  filas.forEach(([k,v],i)=>{const y=titH+headH+i*rowH;if(i%2){x.fillStyle="#F4F7FB";x.fillRect(0,y,W,rowH);}
+    x.fillStyle="#5b6b78";x.font="13px Arial, sans-serif";x.fillText(k,pad,y+20);
+    x.fillStyle=v.startsWith("✓")?"#2E7D32":v.startsWith("✗")?"#B42318":"#1d2b22";x.font="700 13px Arial, sans-serif";const w=x.measureText(v).width;x.fillText(v,W-pad-w,y+20);});
   return await new Promise(r=>c.toBlob(r,"image/png"));
 }
 async function cargarNuevos(){
@@ -563,7 +580,7 @@ function renderNuevos(){
   const sinTel=nvPend().filter(n=>!n.telefono);const porOf={};sinTel.forEach(n=>{(porOf[n.oficina]=porOf[n.oficina]||[]).push(n)});
   let h=`<div class="chips" style="padding:0 0 4px">${[["pendiente","Por atender"],["agregado","Agregados"],["descartado","Descartados"]].map(([k,t])=>`<button class="chip" data-nv-tab="${k}" aria-pressed="${nvTab===k}">${t} <span class="mono" style="opacity:.7">${nuevos.filter(n=>(n.estado||"pendiente")===k).length}</span></button>`).join("")}</div>`;
   if(nvTab==="pendiente"&&Object.keys(porOf).length){
-    h+=`<div class="box"><h4>📋 Pedir números a soporte</h4><p class="cmeta" style="margin:-4px 0 10px">El caso lo registra el patrocinador: entra a esa oficina → Ayuda → Registra tu caso → Solicitudes → Emprendedor Fuxion → Modificar datos.</p><div style="display:flex;flex-wrap:wrap;gap:8px">${Object.entries(porOf).map(([of,ls])=>`<button class="btn sm ghost" data-nv-caso="${esc(of)}">Copiar caso · ${esc(ls[0].ini||of)} (${esc(of)}) · ${ls.length}</button>`).join("")}</div></div>`;
+    h+=`<div class="box"><h4>📋 Pedir números a soporte</h4><p class="cmeta" style="margin:-4px 0 10px">El botón solo <b>copia el texto</b>; el caso lo registras tú en offix, en la oficina indicada (el patrocinador): Ayuda → Registra tu caso → Solicitudes → Emprendedor Fuxion → Modificar datos → pega y Registrar.</p><div style="display:flex;flex-wrap:wrap;gap:8px">${Object.entries(porOf).map(([of,ls])=>`<button class="btn sm ghost" data-nv-caso="${esc(of)}">📋 Copiar texto del caso · ${esc(ls[0].ini||of)} (${esc(of)}) · ${ls.length} socio${ls.length===1?"":"s"}</button>`).join("")}</div></div>`;
   }
   if(!lista.length)h+=`<div class="empty"><h3>${nvTab==="pendiente"?"🎉 Nadie pendiente":"Sin registros"}</h3><p>${nvTab==="pendiente"?"Cuando alguien se afilie en tus oficinas aparecerá aquí.":""}</p></div>`;
   h+=lista.map(nvTarjeta).join("");
@@ -576,13 +593,13 @@ function nvTarjeta(n){
     <div class="nvhead"><span class="nvini">${esc(n.ini||"—")}</span><div class="min"><b>${esc(nvTitle(n.nombre))}</b><small>${esc(n.codigo)} · ${esc(n.oficina||"")} · afiliación ${esc(n.semana_afiliacion||"")}</small></div>
       ${pend?`<button class="tag nvgen" data-nv-gen="${k}" title="Cambiar">${g==="socia"?"Socia":"Socio"} ⇄</button>`:""}</div>
     <div class="nvkpis"><span class="tag ${me_.activo?"":"w"}">${me_.activo?"Activo ✓":"Inactivo"}</span><span class="tag">${esc(me_.rango_actual||n.rango||"—")}</span><span class="tag">QV ${esc(me_.qv_total??n.pv_semana??0)} PV4</span>${ex?`<span class="tag" style="background:var(--accent-soft);color:var(--accent)">Ya está en Socios Clave</span>`:""}</div>
-    ${n.ficha?`<img class="nvficha" src="${n.ficha}" alt="Mi estado de ${esc(nvTitle(n.nombre))}">`:""}
+    ${nvFichaHtml(n)}
     ${pend?`<div class="form nvform">
       <label class="f" style="flex:1 1 140px">País<select data-nv-pais="${k}"><option value="">—</option>${optsPais(n.pais||"").replace(/ selected/g,"").replace(`value="${n.pais}"`,`value="${n.pais}" selected`)}</select></label>
       <label class="f" style="flex:2 1 160px">Celular (de soporte)<input data-nv-tel="${k}" type="tel" inputmode="tel" value="${esc(n.telefono||"")}" placeholder="Pega el número"></label></div>
     <div class="nvacc">
       <button class="btn sm" data-nv-chat="${k}" ${wa&&n.pais?"":"disabled"} style="background:#25D366;color:#fff">① Abrir chat</button>
-      <button class="btn sm ghost" data-nv-ficha="${k}" ${n.ficha?"":"disabled"}>② Compartir ficha</button>
+      <button class="btn sm ghost" data-nv-ficha="${k}">② Compartir ficha</button>
       <button class="btn sm ghost" data-nv-bienv="${k}">③ Copiar bienvenida</button>
       <button class="btn sm ghost" data-nv-vcf="${k}" ${wa&&n.pais?"":"disabled"}>④ Guardar contacto</button>
     </div>
